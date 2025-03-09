@@ -1,2 +1,156 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Blog Title</title><link>https://Meekdai.github.io/Gmeek-template</link><description>Blog description</description><copyright>Blog Title</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://Meekdai.github.io/Gmeek-template</link></image><lastBuildDate>Thu, 14 Mar 2024 09:17:29 +0000</lastBuildDate><managingEditor>Blog Title</managingEditor><ttl>60</ttl><webMaster>Blog Title</webMaster><item><title>请接着之后的安装步骤执行</title><link>https://Meekdai.github.io/Gmeek-template/post/qing-jie-zhao-zhi-hou-de-an-zhuang-bu-zou-zhi-xing.html</link><description>如果你点击了`READM.md`的链接后，看到了这个页面，请继续之后的安装步骤执行。</description><guid isPermaLink="true">https://Meekdai.github.io/Gmeek-template/post/qing-jie-zhao-zhi-hou-de-an-zhuang-bu-zou-zhi-xing.html</guid><pubDate>Thu, 14 Mar 2024 09:15:10 +0000</pubDate></item><item><title>这是Gmeek模板仓库</title><link>https://Meekdai.github.io/Gmeek-template/post/zhe-shi-Gmeek-mo-ban-cang-ku.html</link><description>通过这个模板创建库，可以大大减少部署Gmeek博客的配置步骤。</description><guid isPermaLink="true">https://Meekdai.github.io/Gmeek-template/post/zhe-shi-Gmeek-mo-ban-cang-ku.html</guid><pubDate>Wed, 20 Dec 2023 07:42:24 +0000</pubDate></item></channel></rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Blog Title</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link><description>Blog description</description><copyright>Blog Title</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link></image><lastBuildDate>Sun, 09 Mar 2025 13:56:48 +0000</lastBuildDate><managingEditor>Blog Title</managingEditor><ttl>60</ttl><webMaster>Blog Title</webMaster><item><title>01.注册物品和方块</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/01.-zhu-ce-wu-pin-he-fang-kuai.html</link><description># 01.注册物品和方块
+## 项目结构
+src
+├── main
+│   ├── java
+│   │   ├── com
+│   │   │   ├── XXXYJade17
+│   │   │   │   └── TestMod
+│   │   │   │       ├── Registry.java      //注册类
+│   │   │   │       └── TestMod.java     //Mod主程序
+│   └── resources
+│       ├── assets
+│       │   ├── testmod
+│       │   │   ├── lang
+│       │   │   │   ├── en_us.json  // 英文语言文件
+│       │   │   │   └── zh_cn.json  // 中文语言文件
+│       │   │   ├── models
+│       │   │   │   ├── block
+│       │   │   │   │   ├── example_block_01.json 
+│       │   │   │   │   └── example_block_02.json
+│       │   │   │   └── item
+│       │   │   │       ├── example_item_01.json  
+│       │   │   │       └── example_item_02.json
+│       │   │   └── textures
+│       │   │   │   ├── block
+│       │   │   │   │   ├── example_block_01.png
+│       │   │   │   │   └── example_block_02.png
+│       │   │   │   └── item
+│       │   │   │       ├── example_item_01.png
+│       │   │   │       └── example_item_02.png
+## 一.创建延迟注册容器
+```java
+//Block方块容器
+private static final DeferredRegister&lt;Block&gt; BLOCKS = 
+    DeferredRegister.create(Registries.BLOCK, TestMod.MODID);
+//Item物品容器
+private static final DeferredRegister&lt;Item&gt; ITEMS =
+    DeferredRegister.create(Registries.ITEM, TestMod.MODID);
+```
+## 二.创建注册物品,这里提供两种方式
+### 1.基础注册方式（Supplier）
+```java
+//Block
+private static final Supplier&lt;Block&gt; EXAMPLE_BLOCK_01 = 
+   BLOCKS.register('example_block_01', 
+        () -&gt; new Block(BlockBehaviour.Properties.of()));
+//Item
+ private static final Supplier&lt;Item&gt; EXAMPLE_ITEM_01 = 
+     ITEMS.register('example_item_01',
+        () -&gt; new Item(new Item.Properties()));
+```
+### 2.现代注册方式（DeferredHolder）
+```java
+//Block
+private static final DeferredHolder&lt;Block, Block&gt; EXAMPLE_BLOCK_02 = 
+    BLOCKS.register('example_block_02', 
+        () -&gt; new Block(BlockBehaviour.Properties.of()));
+//Item
+private static final DeferredHolder&lt;Item, Item&gt; EXAMPLE_ITEM_02 = 
+    ITEMS.register('example_item_02', 
+        () -&gt; new Item(new Item.Properties()));
+```
+### *3.如果想要注册Block还需要注册对应的BlockItem
+同样有两种方式
+```java
+//使用Supplier
+private static final Supplier&lt;Item&gt; EXAMPLE_BLOCK_01_ITEM = 
+    ITEMS.register('example_block_01',
+        () -&gt; new BlockItem(EXAMPLE_BLOCK_01.get(), 
+            new Item.Properties()));
+//使用DeferredHolder
+private static final DeferredHolder&lt;Item,Item&gt; EXAMPLE_BLOCK_02_ITEM = 
+    ITEMS.register('example_block_02',
+        () -&gt; new BlockItem(EXAMPLE_BLOCK_02.get(),
+            new Item.Properties()));
+```
+### 4.创建注册函数，将注册器加到总线
+```java
+public static void register(IEventBus bus){
+            BLOCKS.register(bus);
+            ITEMS.register(bus);
+    }
+```
+然后在主程序中引用即可
+```java
+public TestMod(IEventBus bus, ModContainer container) {
+      Registry.register(bus);
+   }
+```
+### 5.添加语言文件
+先在lang包中添加语言文件en_us.json,一般项目自带
+```json
+{
+  'block.testmod.example_block_01': 'Example Block 01',
+  'block.testmod.example_block_02': 'Example Block 02',
+  'item.testmod.example_item_01': 'Example Item 01',
+  'item.testmod.example_item_02': 'Example Item 02'
+}
+```
+想要中文文件，再添加一个zh_cn.json即可
+```json
+{
+  'block.testmod.example_block_01': '示例方块01',
+  'block.testmod.example_block_02': '示例方块02',
+  'item.testmod.example_item_01': '示例物品01',
+  'item.testmod.example_item_02': '示例物品02'
+}
+```
+### 6.添加模型和材质文件
+同项目结构创建，按照自己喜好也可
+```json
+{
+ 'parent': 'minecraft:item/generated',        
+ 'textures': {
+   'layer0': 'testmod:item/example_block_01'     //这里放自己的贴图路径
+ }
+}
+```
+## 附完整代码
+### 注册类
+```java
+public class Registry {
+    private static final DeferredRegister&lt;Block&gt; BLOCKS = DeferredRegister.create(Registries.BLOCK, TestMod.MODID);
+    private static final DeferredRegister&lt;Item&gt; ITEMS = DeferredRegister.create(Registries.ITEM, TestMod.MODID);
+
+    private static final Supplier&lt;Block&gt; EXAMPLE_BLOCK_01 = BLOCKS.register('example_block_01', () -&gt; new Block(BlockBehaviour.Properties.of()));
+    private static final DeferredHolder&lt;Block, Block&gt; EXAMPLE_BLOCK_02 = BLOCKS.register('example_block_02', () -&gt; new Block(BlockBehaviour.Properties.of()));
+
+    private static final Supplier&lt;Item&gt; EXAMPLE_BLOCK_01_ITEM = ITEMS.register('example_block_01',
+            () -&gt; new BlockItem(EXAMPLE_BLOCK_01.get(), new Item.Properties()));
+    private static final Supplier&lt;Item&gt; EXAMPLE_BLOCK_02_ITEM = ITEMS.register('example_block_02',
+            () -&gt; new BlockItem(EXAMPLE_BLOCK_02.get(), new Item.Properties()));
+
+
+    private static final Supplier&lt;Item&gt; EXAMPLE_ITEM_01 = ITEMS.register('example_item_01', () -&gt; new Item(new Item.Properties()));
+    private static final DeferredHolder&lt;Item, Item&gt; EXAMPLE_ITEM_02 = ITEMS.register('example_item_02', () -&gt; new Item(new Item.Properties()));
+
+    public static void register(IEventBus bus){
+            BLOCKS.register(bus);
+            ITEMS.register(bus);
+    }
+}
+```
+### 主程序
+```java
+@Mod(TestMod.MODID)
+public class TestMod {
+   public static final String MODID = 'testmod';
+
+   public TestMod(IEventBus bus, ModContainer container) {
+      Registry.register(bus);
+   }
+}
+```
+用markdown写，帮我改善以下。</description><guid isPermaLink="true">https://XXXYJade17.github.io/NeoForge.github.io/post/01.-zhu-ce-wu-pin-he-fang-kuai.html</guid><pubDate>Sun, 09 Mar 2025 13:56:19 +0000</pubDate></item></channel></rss>
