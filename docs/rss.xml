@@ -1,5 +1,59 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>XXXYJade's NeoForge-1.20.4</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link><description>学习笔记</description><copyright>XXXYJade's NeoForge-1.20.4</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/196541443?v=4</url><title>avatar</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link></image><lastBuildDate>Sun, 09 Mar 2025 15:00:59 +0000</lastBuildDate><managingEditor>XXXYJade's NeoForge-1.20.4</managingEditor><ttl>60</ttl><webMaster>XXXYJade's NeoForge-1.20.4</webMaster><item><title>01.注册物品和方块</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/01.-zhu-ce-wu-pin-he-fang-kuai.html</link><description># 01.注册物品和方块
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>XXXYJade's NeoForge-1.20.4</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link><description>学习笔记</description><copyright>XXXYJade's NeoForge-1.20.4</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/196541443?v=4</url><title>avatar</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link></image><lastBuildDate>Sun, 09 Mar 2025 15:14:16 +0000</lastBuildDate><managingEditor>XXXYJade's NeoForge-1.20.4</managingEditor><ttl>60</ttl><webMaster>XXXYJade's NeoForge-1.20.4</webMaster><item><title>02.自定义创造物品栏标签</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/02.-zi-ding-yi-chuang-zao-wu-pin-lan-biao-qian.html</link><description># 02.自定义创造物品栏标签
+## 项目结构
+src
+├── main
+│ ├── java
+│ │ ├── com
+│ │ │ ├── XXXYJade17
+│ │ │ │ └── TestMod
+│ │ │ │ ├── Registry.java //注册类
+│ │ │ │ ├── ModCreativeTab .java //自定义物品栏
+│ │ │ │ └── TestMod.java //Mod主程序
+│ └── resources
+│ ├── assets
+│ │ ├── testmod
+│ │ │ ├── lang
+│ │ │ │ ├── en_us.json // 英文语言文件
+│ │ │ │ └── zh_cn.json // 中文语言文件
+
+## 一.创建物品栏的注册器（与Block和Item类似）
+```java
+public static final DeferredRegister&lt;CreativeModeTab&gt; CREATIVE_MODE_TABS = 
+    DeferredRegister.create(Registries.CREATIVE_MODE_TAB, TestMod.MODID);
+```
+## 二.注册物品栏，并且添加物品
+`public static final String EXAMPLE_MOD_TAB_STRING = 'creativetab.example_tab';`
+这里可以将物品栏的名字定义为一个变量
+```java
+public static final Supplier&lt;CreativeModeTab&gt; EXAMPLE_TAB  = 
+    CREATIVE_MODE_TABS.register('example_tab',
+        () -&gt; CreativeModeTab.builder()
+            .withTabsBefore(CreativeModeTabs.COMBAT)        //将自定义标签页插入原版'战斗'标签页之前
+            .title(Component.translatable(EXAMPLE_MOD_TAB_STRING))        //设置标签名
+            .icon(() -&gt; new ItemStack(Registry.EXAMPLE_ITEM_01.get()))     //设置物品栏图标
+            .displayItems((pParameters, pOutput) -&gt; {
+                pOutput.accept(Registry.EXAMPLE_ITEM_01.get());      //添加物品到物品栏
+                pOutput.accept(Registry.EXAMPLE_ITEM_02.get());
+                pOutput.accept(Registry.EXAMPLE_BLOCK_01.get());
+                pOutput.accept(Registry.EXAMPLE_BLOCK_02.get());
+            })
+            .build());
+```
+## 三.添加语言文件
+同Block和Item
+```json
+//en_us.json
+{
+  'creativetab.example_tab': 'Example Tab'
+}
+//zh_cn.json
+{ 
+ 'creativetab.example_tab': '示例创造模式标签'
+}
+```
+
+。</description><guid isPermaLink="true">https://XXXYJade17.github.io/NeoForge.github.io/post/02.-zi-ding-yi-chuang-zao-wu-pin-lan-biao-qian.html</guid><pubDate>Sun, 09 Mar 2025 15:12:40 +0000</pubDate></item><item><title>01.注册物品和方块</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/01.-zhu-ce-wu-pin-he-fang-kuai.html</link><description># 01.注册物品和方块
 ## 项目结构
 src
 ├── main
