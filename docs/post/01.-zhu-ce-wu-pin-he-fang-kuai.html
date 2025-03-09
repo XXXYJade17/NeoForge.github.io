@@ -72,7 +72,7 @@ private static final DeferredHolder<Item, Item> EXAMPLE_ITEM_02 =
     ITEMS.register('example_item_02', 
         () -> new Item(new Item.Properties()));
 ```
-### *3.如果想要注册Block还需要注册对应的BlockItem
+### *三.如果想要注册Block还需要注册对应的BlockItem
 同样有两种方式
 ```java
 //使用Supplier
@@ -86,7 +86,7 @@ private static final DeferredHolder<Item,Item> EXAMPLE_BLOCK_02_ITEM =
         () -> new BlockItem(EXAMPLE_BLOCK_02.get(),
             new Item.Properties()));
 ```
-### 4.创建注册函数，将注册器加到总线
+### 四.创建注册函数，将注册器加到总线
 ```java
 public static void register(IEventBus bus){
             BLOCKS.register(bus);
@@ -99,7 +99,7 @@ public TestMod(IEventBus bus, ModContainer container) {
       Registry.register(bus);
    }
 ```
-### 5.添加语言文件
+### 五.添加语言文件
 先在lang包中添加语言文件en_us.json,一般项目自带
 ```json
 {
@@ -118,7 +118,7 @@ public TestMod(IEventBus bus, ModContainer container) {
   'item.testmod.example_item_02': '示例物品02'
 }
 ```
-### 6.添加模型和材质文件
+### 六.添加模型和材质文件
 同项目结构创建，按照自己喜好也可
 ```json
 {
@@ -227,7 +227,7 @@ private static final DeferredHolder<Item, Item> EXAMPLE_ITEM_02 =
     ITEMS.register('example_item_02', 
         () -> new Item(new Item.Properties()));
 ```
-### *3.如果想要注册Block还需要注册对应的BlockItem
+### *三.如果想要注册Block还需要注册对应的BlockItem
 同样有两种方式
 ```java
 //使用Supplier
@@ -241,7 +241,7 @@ private static final DeferredHolder<Item,Item> EXAMPLE_BLOCK_02_ITEM =
         () -> new BlockItem(EXAMPLE_BLOCK_02.get(),
             new Item.Properties()));
 ```
-### 4.创建注册函数，将注册器加到总线
+### 四.创建注册函数，将注册器加到总线
 ```java
 public static void register(IEventBus bus){
             BLOCKS.register(bus);
@@ -254,7 +254,7 @@ public TestMod(IEventBus bus, ModContainer container) {
       Registry.register(bus);
    }
 ```
-### 5.添加语言文件
+### 五.添加语言文件
 先在lang包中添加语言文件en_us.json,一般项目自带
 ```json
 {
@@ -273,7 +273,7 @@ public TestMod(IEventBus bus, ModContainer container) {
   'item.testmod.example_item_02': '示例物品02'
 }
 ```
-### 6.添加模型和材质文件
+### 六.添加模型和材质文件
 同项目结构创建，按照自己喜好也可
 ```json
 {
@@ -445,7 +445,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <span class="pl-k">private</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-smi">DeferredHolder</span>&lt;<span class="pl-smi">Item</span>, <span class="pl-smi">Item</span>&gt; <span class="pl-c1">EXAMPLE_ITEM_02</span> = 
     <span class="pl-c1">ITEMS</span>.<span class="pl-en">register</span>(<span class="pl-s">"example_item_02"</span>, 
         () -&gt; <span class="pl-k">new</span> <span class="pl-smi">Item</span>(<span class="pl-k">new</span> <span class="pl-smi">Item</span>.<span class="pl-smi">Properties</span>()));</pre></div>
-<h3>*3.如果想要注册Block还需要注册对应的BlockItem</h3>
+<h3>*三.如果想要注册Block还需要注册对应的BlockItem</h3>
 <p>同样有两种方式</p>
 <div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-c">//使用Supplier</span>
 <span class="pl-k">private</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-smi">Supplier</span>&lt;<span class="pl-smi">Item</span>&gt; <span class="pl-c1">EXAMPLE_BLOCK_01_ITEM</span> = 
@@ -457,7 +457,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     <span class="pl-c1">ITEMS</span>.<span class="pl-en">register</span>(<span class="pl-s">"example_block_02"</span>,
         () -&gt; <span class="pl-k">new</span> <span class="pl-smi">BlockItem</span>(<span class="pl-c1">EXAMPLE_BLOCK_02</span>.<span class="pl-en">get</span>(),
             <span class="pl-k">new</span> <span class="pl-smi">Item</span>.<span class="pl-smi">Properties</span>()));</pre></div>
-<h3>4.创建注册函数，将注册器加到总线</h3>
+<h3>四.创建注册函数，将注册器加到总线</h3>
 <div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-smi">void</span> <span class="pl-en">register</span>(<span class="pl-smi">IEventBus</span> <span class="pl-s1">bus</span>){
             <span class="pl-c1">BLOCKS</span>.<span class="pl-en">register</span>(<span class="pl-s1">bus</span>);
             <span class="pl-c1">ITEMS</span>.<span class="pl-en">register</span>(<span class="pl-s1">bus</span>);
@@ -466,7 +466,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-k">public</span> <span class="pl-smi">TestMod</span><span class="pl-en"></span>(<span class="pl-smi">IEventBus</span> <span class="pl-s1">bus</span>, <span class="pl-smi">ModContainer</span> <span class="pl-s1">container</span>) {
       <span class="pl-smi">Registry</span>.<span class="pl-en">register</span>(<span class="pl-s1">bus</span>);
    }</pre></div>
-<h3>5.添加语言文件</h3>
+<h3>五.添加语言文件</h3>
 <p>先在lang包中添加语言文件en_us.json,一般项目自带</p>
 <div class="highlight highlight-source-json"><pre class="notranslate">{
   <span class="pl-ent">"block.testmod.example_block_01"</span>: <span class="pl-s"><span class="pl-pds">"</span>Example Block 01<span class="pl-pds">"</span></span>,
@@ -481,7 +481,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
   <span class="pl-ent">"item.testmod.example_item_01"</span>: <span class="pl-s"><span class="pl-pds">"</span>示例物品01<span class="pl-pds">"</span></span>,
   <span class="pl-ent">"item.testmod.example_item_02"</span>: <span class="pl-s"><span class="pl-pds">"</span>示例物品02<span class="pl-pds">"</span></span>
 }</pre></div>
-<h3>6.添加模型和材质文件</h3>
+<h3>六.添加模型和材质文件</h3>
 <p>同项目结构创建，按照自己喜好也可</p>
 <div class="highlight highlight-source-json"><pre class="notranslate">{
  <span class="pl-ent">"parent"</span>: <span class="pl-s"><span class="pl-pds">"</span>minecraft:item/generated<span class="pl-pds">"</span></span>,        
