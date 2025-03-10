@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>XXXYJade's NeoForge-1.20.4</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link><description>学习笔记</description><copyright>XXXYJade's NeoForge-1.20.4</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/196541443?v=4</url><title>avatar</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link></image><lastBuildDate>Mon, 10 Mar 2025 09:30:49 +0000</lastBuildDate><managingEditor>XXXYJade's NeoForge-1.20.4</managingEditor><ttl>60</ttl><webMaster>XXXYJade's NeoForge-1.20.4</webMaster><item><title>03.自定义BlockState</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/03.-zi-ding-yi-BlockState.html</link><description>## 项目结构
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>XXXYJade's NeoForge-1.20.4</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link><description>学习笔记</description><copyright>XXXYJade's NeoForge-1.20.4</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/196541443?v=4</url><title>avatar</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link></image><lastBuildDate>Mon, 10 Mar 2025 09:39:50 +0000</lastBuildDate><managingEditor>XXXYJade's NeoForge-1.20.4</managingEditor><ttl>60</ttl><webMaster>XXXYJade's NeoForge-1.20.4</webMaster><item><title>03.自定义BlockState</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/03.-zi-ding-yi-BlockState.html</link><description>## 项目结构
 src
 ├── main
 │ ├── java
@@ -201,13 +201,33 @@ public TestMod(IEventBus bus, ModContainer container) {
 }
 ```
 ### 六.添加模型和材质文件
-同项目结构创建，按照自己喜好也可
+这里Block和Item略有不同
+- Item
+```json
+{
+ 'parent': 'minecraft:item/generated',
+ 'textures': {
+   'layer0': 'testmod:item/example_item_01'
+ }
+}
+```
+- Block
+先配置Block
 ```json
 {
  'parent': 'minecraft:item/generated',        
  'textures': {
    'layer0': 'testmod:item/example_block_01'     //这里放自己的贴图路径
  }
+}
+```
+再配置BlockItem
+```json
+{
+  'parent': 'testmod:block/example_block_01',
+  'textures': {
+    'layer0': 'testmod:item/example_block_01'
+  }
 }
 ```
 ## 附完整代码

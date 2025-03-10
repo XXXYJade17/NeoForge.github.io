@@ -120,13 +120,33 @@ public TestMod(IEventBus bus, ModContainer container) {
 }
 ```
 ### 六.添加模型和材质文件
-同项目结构创建，按照自己喜好也可
+这里Block和Item略有不同
+- Item
+```json
+{
+ 'parent': 'minecraft:item/generated',
+ 'textures': {
+   'layer0': 'testmod:item/example_item_01'
+ }
+}
+```
+- Block
+先配置Block
 ```json
 {
  'parent': 'minecraft:item/generated',        
  'textures': {
    'layer0': 'testmod:item/example_block_01'     //这里放自己的贴图路径
  }
+}
+```
+再配置BlockItem
+```json
+{
+  'parent': 'testmod:block/example_block_01',
+  'textures': {
+    'layer0': 'testmod:item/example_block_01'
+  }
 }
 ```
 ## 附完整代码
@@ -276,13 +296,33 @@ public TestMod(IEventBus bus, ModContainer container) {
 }
 ```
 ### 六.添加模型和材质文件
-同项目结构创建，按照自己喜好也可
+这里Block和Item略有不同
+- Item
+```json
+{
+ 'parent': 'minecraft:item/generated',
+ 'textures': {
+   'layer0': 'testmod:item/example_item_01'
+ }
+}
+```
+- Block
+先配置Block
 ```json
 {
  'parent': 'minecraft:item/generated',        
  'textures': {
    'layer0': 'testmod:item/example_block_01'     //这里放自己的贴图路径
  }
+}
+```
+再配置BlockItem
+```json
+{
+  'parent': 'testmod:block/example_block_01',
+  'textures': {
+    'layer0': 'testmod:item/example_block_01'
+  }
 }
 ```
 ## 附完整代码
@@ -485,12 +525,32 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
   <span class="pl-ent">"item.testmod.example_item_02"</span>: <span class="pl-s"><span class="pl-pds">"</span>示例物品02<span class="pl-pds">"</span></span>
 }</pre></div>
 <h3>六.添加模型和材质文件</h3>
-<p>同项目结构创建，按照自己喜好也可</p>
+<p>这里Block和Item略有不同</p>
+<ul>
+<li>Item</li>
+</ul>
+<div class="highlight highlight-source-json"><pre class="notranslate">{
+ <span class="pl-ent">"parent"</span>: <span class="pl-s"><span class="pl-pds">"</span>minecraft:item/generated<span class="pl-pds">"</span></span>,
+ <span class="pl-ent">"textures"</span>: {
+   <span class="pl-ent">"layer0"</span>: <span class="pl-s"><span class="pl-pds">"</span>testmod:item/example_item_01<span class="pl-pds">"</span></span>
+ }
+}</pre></div>
+<ul>
+<li>Block<br>
+先配置Block</li>
+</ul>
 <div class="highlight highlight-source-json"><pre class="notranslate">{
  <span class="pl-ent">"parent"</span>: <span class="pl-s"><span class="pl-pds">"</span>minecraft:item/generated<span class="pl-pds">"</span></span>,        
  <span class="pl-ent">"textures"</span>: {
    <span class="pl-ent">"layer0"</span>: <span class="pl-s"><span class="pl-pds">"</span>testmod:item/example_block_01<span class="pl-pds">"</span></span>     <span class="pl-ii">//这里放自己的贴图路径</span>
  }
+}</pre></div>
+<p>再配置BlockItem</p>
+<div class="highlight highlight-source-json"><pre class="notranslate">{
+  <span class="pl-ent">"parent"</span>: <span class="pl-s"><span class="pl-pds">"</span>testmod:block/example_block_01<span class="pl-pds">"</span></span>,
+  <span class="pl-ent">"textures"</span>: {
+    <span class="pl-ent">"layer0"</span>: <span class="pl-s"><span class="pl-pds">"</span>testmod:item/example_block_01<span class="pl-pds">"</span></span>
+  }
 }</pre></div>
 <h2>附完整代码</h2>
 <h3>注册类</h3>
