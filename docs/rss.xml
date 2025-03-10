@@ -1,5 +1,44 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>XXXYJade's NeoForge-1.20.4</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link><description>学习笔记</description><copyright>XXXYJade's NeoForge-1.20.4</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/196541443?v=4</url><title>avatar</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link></image><lastBuildDate>Sun, 09 Mar 2025 15:19:51 +0000</lastBuildDate><managingEditor>XXXYJade's NeoForge-1.20.4</managingEditor><ttl>60</ttl><webMaster>XXXYJade's NeoForge-1.20.4</webMaster><item><title>02.自定义创造物品栏标签</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/02.-zi-ding-yi-chuang-zao-wu-pin-lan-biao-qian.html</link><description>## 项目结构
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>XXXYJade's NeoForge-1.20.4</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link><description>学习笔记</description><copyright>XXXYJade's NeoForge-1.20.4</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/196541443?v=4</url><title>avatar</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link></image><lastBuildDate>Mon, 10 Mar 2025 05:10:41 +0000</lastBuildDate><managingEditor>XXXYJade's NeoForge-1.20.4</managingEditor><ttl>60</ttl><webMaster>XXXYJade's NeoForge-1.20.4</webMaster><item><title>03.自定义BlockState</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/03.-zi-ding-yi-BlockState.html</link><description>## 项目结构
+src
+├── main
+│ ├── java
+│ │ ├── com
+│ │ │ ├── XXXYJade17
+│ │ │ │ └── TestMod
+│ │ │ │ ├── Registry.java
+│ │ │ │ ├── StateExampleBlock.java
+│ │ │ │ └── TestMod.java 
+│ └── resources
+│ ├── assets
+│ │ ├── testmod
+│ │ │ ├── blockstates
+│ │ │ │ └── state_example_block.json
+│ │ │ ├── lang
+│ │ │ │ ├── en_us.json // 英文语言文件
+│ │ │ │ └── zh_cn.json // 中文语言文件
+│ │ │ ├── models
+│ │ │ │ ├── block
+│ │ │ │ │ ├── state_exampe_block_off.json
+│ │ │ │ │ └── state_exampe_block_on.json
+│ │ │ └── textures
+│ │ │ │ └── block
+│ │ │ │    ├── state_exampe_block_off.json.png
+│ │ │ │    └── state_exampe_block_on.json.png
+## 一.先创建一个类并且继承Block
+```java
+public class StateExampleBlock extends Block {
+    //构造方法
+    public StateExampleBlock(Properties properties) {
+        super(properties);
+    }
+}
+```
+## 二.定义需要的状态属性
+```java
+public static final BooleanProperty LIT = BooleanProperty.create('lit');
+```
+- ​​声明一个布尔型方块状态属性 LIT，表示方块是否处于发光状态。</description><guid isPermaLink="true">https://XXXYJade17.github.io/NeoForge.github.io/post/03.-zi-ding-yi-BlockState.html</guid><pubDate>Mon, 10 Mar 2025 02:58:57 +0000</pubDate></item><item><title>02.自定义创造物品栏标签</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/02.-zi-ding-yi-chuang-zao-wu-pin-lan-biao-qian.html</link><description>## 项目结构
 src
 ├── main
 │ ├── java
