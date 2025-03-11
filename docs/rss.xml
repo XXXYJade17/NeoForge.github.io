@@ -1,5 +1,127 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>XXXYJade's NeoForge-1.20.4</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link><description>学习笔记</description><copyright>XXXYJade's NeoForge-1.20.4</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/196541443?v=4</url><title>avatar</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link></image><lastBuildDate>Tue, 11 Mar 2025 07:20:00 +0000</lastBuildDate><managingEditor>XXXYJade's NeoForge-1.20.4</managingEditor><ttl>60</ttl><webMaster>XXXYJade's NeoForge-1.20.4</webMaster><item><title>05.自定义食物</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/05.-zi-ding-yi-shi-wu.html</link><description>## 一,这里同样需要一个物品,以[EXAMPLE_ITEM_02](https://xxxyjade17.github.io/NeoForge.github.io/post/01.-zhu-ce-wu-pin-he-fang-kuai.html)为例
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>XXXYJade's NeoForge-1.20.4</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link><description>学习笔记</description><copyright>XXXYJade's NeoForge-1.20.4</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/196541443?v=4</url><title>avatar</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link></image><lastBuildDate>Tue, 11 Mar 2025 14:15:53 +0000</lastBuildDate><managingEditor>XXXYJade's NeoForge-1.20.4</managingEditor><ttl>60</ttl><webMaster>XXXYJade's NeoForge-1.20.4</webMaster><item><title>06.自定义工具</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/06.-zi-ding-yi-gong-ju.html</link><description>## 一. 老规矩现有Item再有工具，先注册一个[EXAMPLE_SWORD](https://xxxyjade17.github.io/NeoForge.github.io/post/01.-zhu-ce-wu-pin-he-fang-kuai.html)(示例剑)
+## 二. 创建一个枚举类ExampleTier,实现 Tier 接口
+Tier可以用于表示Minecraft中自定义工具的等级或品质
+```java
+public enum ExampleTier implements Tier {
+    private final int level;
+    private final int uses;
+    private final float speed;
+    private final float damage;
+    private final int enchantmentValue;
+    private final Supplier&lt;Ingredient&gt; repairIngredient;
+    @Override
+    public int getUses() {
+        return this.uses;
+    }
+    @Override
+    public float getSpeed() {
+        return this.speed;
+    }
+    @Override
+    public float getAttackDamageBonus() {
+        return this.damage;
+    }
+    @Override
+    public int getLevel() {
+        return this.level;
+    }
+    @Override
+    public int getEnchantmentValue() {
+        return this.enchantmentValue;
+    }
+    @Override
+    public Ingredient getRepairIngredient() {
+        return this.repairIngredient.get();
+    }
+}
+```
+实现接口的方法及创建需要的变量
+## 三. 创建构造方法
+```java 
+ExampleTier(int level, int uses, float speed, float damage, int enchantmentValue, Supplier&lt;Ingredient&gt; repairIngredient) {
+        this.level = level;
+        this.uses = uses;
+        this.speed = speed;
+        this.damage = damage;
+        this.enchantmentValue = enchantmentValue;
+        this.repairIngredient = repairIngredient;
+    }
+```
+参数含义
+- level :  工具等级
+- uses :  使用次数（耐久度）
+- speed :  挖掘速度
+- damage :  伤害
+- enchantmentValue :  附魔等级
+- repairIngredient :  修复材料
+## 四. 创建实例对象
+```java
+    Example(3,2000,10F,100F,30,() -&gt; Ingredient.of(Registry.EXAMPLE_ITEM_01.get()));
+```
+创建了一个等级为3，使用次数为2000，挖掘速度为10，伤害为100，附魔等级为30，修复材料为EXAMPLE_ITEM_01的工具材质
+## 五. 调用实例
+将注册改为如下形式
+```java
+public static final Supplier&lt;Item&gt; EXAMPLE_SWORD=ITEMS.register('example_sword',
+            () -&gt;new SwordItem(ExampleTier.Example,100,0.1f,new Item.Properties()));
+```
+## 附完整代码
+```java
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.crafting.Ingredient;
+
+import java.util.function.Supplier;
+
+public enum ExampleTier implements Tier {
+    Example(4,2000,10F,100F,30,() -&gt; Ingredient.of(Registry.EXAMPLE_ITEM_01.get()));
+
+    private final int level;
+    private final int uses;
+    private final float speed;
+    private final float damage;
+    private final int enchantmentValue;
+    private final Supplier&lt;Ingredient&gt; repairIngredient;
+    ExampleTier(int level, int uses, float speed, float damage, int enchantmentValue, Supplier&lt;Ingredient&gt; repairIngredient) {
+        this.level = level;
+        this.uses = uses;
+        this.speed = speed;
+        this.damage = damage;
+        this.enchantmentValue = enchantmentValue;
+        this.repairIngredient = repairIngredient;
+    }
+    @Override
+    public int getUses() {
+        return this.uses;
+    }
+
+    @Override
+    public float getSpeed() {
+        return this.speed;
+    }
+
+    @Override
+    public float getAttackDamageBonus() {
+        return this.damage;
+    }
+
+    @Override
+    public int getLevel() {
+        return this.level;
+    }
+
+    @Override
+    public int getEnchantmentValue() {
+        return this.enchantmentValue;
+    }
+
+    @Override
+    public Ingredient getRepairIngredient() {
+        return this.repairIngredient.get();
+    }
+}
+
+```。</description><guid isPermaLink="true">https://XXXYJade17.github.io/NeoForge.github.io/post/06.-zi-ding-yi-gong-ju.html</guid><pubDate>Tue, 11 Mar 2025 14:15:21 +0000</pubDate></item><item><title>05.自定义食物</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/05.-zi-ding-yi-shi-wu.html</link><description>## 一,这里同样需要一个物品,以[EXAMPLE_ITEM_02](https://xxxyjade17.github.io/NeoForge.github.io/post/01.-zhu-ce-wu-pin-he-fang-kuai.html)为例
 ## 二.创建一个FoodProperties对象
 ```java 
 public static final FoodProperties FOOD_PROPERTIES = new FoodProperties.Builder()
