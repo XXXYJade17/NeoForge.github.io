@@ -1,5 +1,20 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>XXXYJade's NeoForge-1.20.4</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link><description>学习笔记</description><copyright>XXXYJade's NeoForge-1.20.4</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/196541443?v=4</url><title>avatar</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link></image><lastBuildDate>Tue, 11 Mar 2025 06:24:26 +0000</lastBuildDate><managingEditor>XXXYJade's NeoForge-1.20.4</managingEditor><ttl>60</ttl><webMaster>XXXYJade's NeoForge-1.20.4</webMaster><item><title>04.自定物品属性覆盖</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/04.-zi-ding-wu-pin-shu-xing-fu-gai.html</link><description>## 一.需要先注册一个物品，这里采用之前的EXAMPLE_ITEM_01
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>XXXYJade's NeoForge-1.20.4</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link><description>学习笔记</description><copyright>XXXYJade's NeoForge-1.20.4</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/196541443?v=4</url><title>avatar</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link></image><lastBuildDate>Tue, 11 Mar 2025 07:20:00 +0000</lastBuildDate><managingEditor>XXXYJade's NeoForge-1.20.4</managingEditor><ttl>60</ttl><webMaster>XXXYJade's NeoForge-1.20.4</webMaster><item><title>05.自定义食物</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/05.-zi-ding-yi-shi-wu.html</link><description>## 一,这里同样需要一个物品,以[EXAMPLE_ITEM_02](https://xxxyjade17.github.io/NeoForge.github.io/post/01.-zhu-ce-wu-pin-he-fang-kuai.html)为例
+## 二.创建一个FoodProperties对象
+```java 
+public static final FoodProperties FOOD_PROPERTIES = new FoodProperties.Builder()
+            .saturationMod(10)      //饱食度恢复速度
+            .nutrition(2)       //进食恢复饱食度
+            .alwaysEat()        //满饥饿使用
+            .effect(()-&gt; new MobEffectInstance(MobEffects.JUMP,10*20,10),1.0f)     //四个参数分别为效果，时间，等级，发生概率
+            .build();
+```
+## 三.将属性传递给Item
+将之前创建的FoodProperties对象传递给properties
+```java
+    public static final DeferredHolder&lt;Item, Item&gt; EXAMPLE_ITEM_02 = ITEMS.register('example_item_02',
+            () -&gt; new Item(new Item.Properties().food(FOOD_PROPERTIES)));
+```。</description><guid isPermaLink="true">https://XXXYJade17.github.io/NeoForge.github.io/post/05.-zi-ding-yi-shi-wu.html</guid><pubDate>Tue, 11 Mar 2025 07:19:31 +0000</pubDate></item><item><title>04.自定物品属性覆盖</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/04.-zi-ding-wu-pin-shu-xing-fu-gai.html</link><description>## 一.需要先注册一个物品，这里采用之前的EXAMPLE_ITEM_01
 [参考链接](https://xxxyjade17.github.io/NeoForge.github.io/post/01.-zhu-ce-wu-pin-he-fang-kuai.html)
 ## 二.添加物品属性覆盖
 ```java
