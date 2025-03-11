@@ -13,6 +13,7 @@
 <meta name="description" content="## 一. 老规矩现有Item再有工具，先注册一个[EXAMPLE_SWORD](https://xxxyjade17.github.io/NeoForge.github.io/post/01.-zhu-ce-wu-pin-he-fang-kuai.html)(示例剑)
 ## 二. 创建一个枚举类ExampleTier,实现 Tier 接口
 Tier可以用于表示Minecraft中自定义工具的等级或品质
+如果想要其他工具实现其他接口就行了，如镐（pickaxe）等等...
 ```java
 public enum ExampleTier implements Tier {
     private final int level;
@@ -137,6 +138,7 @@ public enum ExampleTier implements Tier {
 <meta property="og:description" content="## 一. 老规矩现有Item再有工具，先注册一个[EXAMPLE_SWORD](https://xxxyjade17.github.io/NeoForge.github.io/post/01.-zhu-ce-wu-pin-he-fang-kuai.html)(示例剑)
 ## 二. 创建一个枚举类ExampleTier,实现 Tier 接口
 Tier可以用于表示Minecraft中自定义工具的等级或品质
+如果想要其他工具实现其他接口就行了，如镐（pickaxe）等等...
 ```java
 public enum ExampleTier implements Tier {
     private final int level;
@@ -329,7 +331,8 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     <div id="content">
 <div class="markdown-body" id="postBody"><h2>一. 老规矩现有Item再有工具，先注册一个<a href="https://xxxyjade17.github.io/NeoForge.github.io/post/01.-zhu-ce-wu-pin-he-fang-kuai.html" rel="nofollow">EXAMPLE_SWORD</a>(示例剑)</h2>
 <h2>二. 创建一个枚举类ExampleTier,实现 Tier 接口</h2>
-<p>Tier可以用于表示Minecraft中自定义工具的等级或品质</p>
+<p>Tier可以用于表示Minecraft中自定义工具的等级或品质<br>
+如果想要其他工具实现其他接口就行了，如镐（pickaxe）等等...</p>
 <div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-k">public</span> <span class="pl-k">enum</span> <span class="pl-smi">ExampleTier</span> <span class="pl-k">implements</span> <span class="pl-smi">Tier</span> {
     <span class="pl-k">private</span> <span class="pl-k">final</span> <span class="pl-s1">int</span> <span class="pl-s1">level</span>;
     <span class="pl-k">private</span> <span class="pl-k">final</span> <span class="pl-smi">int</span> <span class="pl-s1">uses</span>;
