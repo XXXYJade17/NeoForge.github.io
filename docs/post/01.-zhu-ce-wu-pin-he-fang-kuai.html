@@ -30,8 +30,8 @@ src
 │       │   │   │   │   ├── example_block_01.json 
 │       │   │   │   │   └── example_block_02.json
 │       │   │   │   └── item
-│       │   │   │       ├── example_block_01_item.json  
-│       │   │   │       ├── example_block_02_item.json    
+│       │   │   │       ├── example_block_01.json  
+│       │   │   │       ├── example_block_02.json    
 │       │   │   │       ├── example_item_01.json  
 │       │   │   │       └── example_item_02.json
 │       │   │   └── textures
@@ -120,7 +120,17 @@ public TestMod(IEventBus bus, ModContainer container) {
 }
 ```
 ### 六.添加模型和材质文件
-这里Block和Item略有不同
+先手动创建目录
+├─resources
+├── assets
+│   ├── testmod
+│   │   ├── lang
+│   │   ├── models
+│   │   │   ├── block
+│   │   │   └── item
+│   │   └── textures
+│   │   │   ├── block
+│   │   │   └── item
 - Item
 ```json
 {
@@ -131,59 +141,80 @@ public TestMod(IEventBus bus, ModContainer container) {
 }
 ```
 - Block
-先配置Block
+先配置Block，这里采用六面同材质，根据需求可以自己更改
 ```json
 {
- 'parent': 'minecraft:item/generated',        
- 'textures': {
-   'layer0': 'testmod:item/example_block_01'    
- }
+  'parent': 'block/cube_all',
+  'textures': {
+    'all': 'testmod:block/example_block_01'
+  }
 }
 ```
-再配置BlockItem
+   之后还需要在 model/Item 里再添加BlockItem,文件名同block
 ```json
 {
   'parent': 'testmod:block/example_block_01',
-  'textures': {
-    'layer0': 'testmod:item/example_block_01'
-  }
-}
+ }
 ```
 ## 附完整代码
 ### 注册类
 ```java
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import java.util.function.Supplier;
+
 public class Registry {
-    private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, TestMod.MODID);
-    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, TestMod.MODID);
-
-    private static final Supplier<Block> EXAMPLE_BLOCK_01 = BLOCKS.register('example_block_01', () -> new Block(BlockBehaviour.Properties.of()));
-    private static final DeferredHolder<Block, Block> EXAMPLE_BLOCK_02 = BLOCKS.register('example_block_02', () -> new Block(BlockBehaviour.Properties.of()));
-
-    private static final Supplier<Item> EXAMPLE_BLOCK_01_ITEM = ITEMS.register('example_block_01',
+    //延迟注册器
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, TestMod.MODID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, TestMod.MODID);
+    //BLOCK
+    public static final Supplier<Block> EXAMPLE_BLOCK_01 = BLOCKS.register('example_block_01',
+            () -> new Block(BlockBehaviour.Properties.of()));
+    public static final DeferredHolder<Block, Block> EXAMPLE_BLOCK_02 = BLOCKS.register('example_block_02',
+            () -> new Block(BlockBehaviour.Properties.of()));
+    //BLOCK_ITEM
+    public static final Supplier<Item> EXAMPLE_BLOCK_01_ITEM = ITEMS.register('example_block_01',
             () -> new BlockItem(EXAMPLE_BLOCK_01.get(), new Item.Properties()));
-    private static final Supplier<Item> EXAMPLE_BLOCK_02_ITEM = ITEMS.register('example_block_02',
+    public static final DeferredHolder<Item,Item> EXAMPLE_BLOCK_02_ITEM = ITEMS.register('example_block_02',
             () -> new BlockItem(EXAMPLE_BLOCK_02.get(), new Item.Properties()));
-
-
-    private static final Supplier<Item> EXAMPLE_ITEM_01 = ITEMS.register('example_item_01', () -> new Item(new Item.Properties()));
-    private static final DeferredHolder<Item, Item> EXAMPLE_ITEM_02 = ITEMS.register('example_item_02', () -> new Item(new Item.Properties()));
-
+    //ITEM
+    public static final Supplier<Item>  EXAMPLE_ITEM_01= ITEMS.register('example_item_01',
+            () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> EXAMPLE_ITEM_02 = ITEMS.register('example_item_02',
+            () -> new Item(new Item.Properties()));
+    //BLOCK STATE
+    public static final Supplier<Block> STATE_EXAMPLE_BLOCK = BLOCKS.register('state_example_block',
+            () -> new StateExampleBlock(BlockBehaviour.Properties.of()));
+    public static final Supplier<Item> STATE_EXAMPLE_BLOCK_ITEM = ITEMS.register('state_example_block',
+            () -> new BlockItem(STATE_EXAMPLE_BLOCK.get(), new Item.Properties()));
+    //注册方法
     public static void register(IEventBus bus){
             BLOCKS.register(bus);
             ITEMS.register(bus);
+            ModCreativeTab.register(bus);
     }
 }
 ```
 ### 主程序
 ```java
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+
 @Mod(TestMod.MODID)
 public class TestMod {
    public static final String MODID = 'testmod';
-
    public TestMod(IEventBus bus, ModContainer container) {
       Registry.register(bus);
    }
 }
+
 ```。">
 <meta property="og:title" content="01.注册物品和方块">
 <meta property="og:description" content="## 项目结构
@@ -206,8 +237,8 @@ src
 │       │   │   │   │   ├── example_block_01.json 
 │       │   │   │   │   └── example_block_02.json
 │       │   │   │   └── item
-│       │   │   │       ├── example_block_01_item.json  
-│       │   │   │       ├── example_block_02_item.json    
+│       │   │   │       ├── example_block_01.json  
+│       │   │   │       ├── example_block_02.json    
 │       │   │   │       ├── example_item_01.json  
 │       │   │   │       └── example_item_02.json
 │       │   │   └── textures
@@ -296,7 +327,17 @@ public TestMod(IEventBus bus, ModContainer container) {
 }
 ```
 ### 六.添加模型和材质文件
-这里Block和Item略有不同
+先手动创建目录
+├─resources
+├── assets
+│   ├── testmod
+│   │   ├── lang
+│   │   ├── models
+│   │   │   ├── block
+│   │   │   └── item
+│   │   └── textures
+│   │   │   ├── block
+│   │   │   └── item
 - Item
 ```json
 {
@@ -307,59 +348,80 @@ public TestMod(IEventBus bus, ModContainer container) {
 }
 ```
 - Block
-先配置Block
+先配置Block，这里采用六面同材质，根据需求可以自己更改
 ```json
 {
- 'parent': 'minecraft:item/generated',        
- 'textures': {
-   'layer0': 'testmod:item/example_block_01'    
- }
+  'parent': 'block/cube_all',
+  'textures': {
+    'all': 'testmod:block/example_block_01'
+  }
 }
 ```
-再配置BlockItem
+   之后还需要在 model/Item 里再添加BlockItem,文件名同block
 ```json
 {
   'parent': 'testmod:block/example_block_01',
-  'textures': {
-    'layer0': 'testmod:item/example_block_01'
-  }
-}
+ }
 ```
 ## 附完整代码
 ### 注册类
 ```java
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import java.util.function.Supplier;
+
 public class Registry {
-    private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, TestMod.MODID);
-    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, TestMod.MODID);
-
-    private static final Supplier<Block> EXAMPLE_BLOCK_01 = BLOCKS.register('example_block_01', () -> new Block(BlockBehaviour.Properties.of()));
-    private static final DeferredHolder<Block, Block> EXAMPLE_BLOCK_02 = BLOCKS.register('example_block_02', () -> new Block(BlockBehaviour.Properties.of()));
-
-    private static final Supplier<Item> EXAMPLE_BLOCK_01_ITEM = ITEMS.register('example_block_01',
+    //延迟注册器
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, TestMod.MODID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, TestMod.MODID);
+    //BLOCK
+    public static final Supplier<Block> EXAMPLE_BLOCK_01 = BLOCKS.register('example_block_01',
+            () -> new Block(BlockBehaviour.Properties.of()));
+    public static final DeferredHolder<Block, Block> EXAMPLE_BLOCK_02 = BLOCKS.register('example_block_02',
+            () -> new Block(BlockBehaviour.Properties.of()));
+    //BLOCK_ITEM
+    public static final Supplier<Item> EXAMPLE_BLOCK_01_ITEM = ITEMS.register('example_block_01',
             () -> new BlockItem(EXAMPLE_BLOCK_01.get(), new Item.Properties()));
-    private static final Supplier<Item> EXAMPLE_BLOCK_02_ITEM = ITEMS.register('example_block_02',
+    public static final DeferredHolder<Item,Item> EXAMPLE_BLOCK_02_ITEM = ITEMS.register('example_block_02',
             () -> new BlockItem(EXAMPLE_BLOCK_02.get(), new Item.Properties()));
-
-
-    private static final Supplier<Item> EXAMPLE_ITEM_01 = ITEMS.register('example_item_01', () -> new Item(new Item.Properties()));
-    private static final DeferredHolder<Item, Item> EXAMPLE_ITEM_02 = ITEMS.register('example_item_02', () -> new Item(new Item.Properties()));
-
+    //ITEM
+    public static final Supplier<Item>  EXAMPLE_ITEM_01= ITEMS.register('example_item_01',
+            () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> EXAMPLE_ITEM_02 = ITEMS.register('example_item_02',
+            () -> new Item(new Item.Properties()));
+    //BLOCK STATE
+    public static final Supplier<Block> STATE_EXAMPLE_BLOCK = BLOCKS.register('state_example_block',
+            () -> new StateExampleBlock(BlockBehaviour.Properties.of()));
+    public static final Supplier<Item> STATE_EXAMPLE_BLOCK_ITEM = ITEMS.register('state_example_block',
+            () -> new BlockItem(STATE_EXAMPLE_BLOCK.get(), new Item.Properties()));
+    //注册方法
     public static void register(IEventBus bus){
             BLOCKS.register(bus);
             ITEMS.register(bus);
+            ModCreativeTab.register(bus);
     }
 }
 ```
 ### 主程序
 ```java
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+
 @Mod(TestMod.MODID)
 public class TestMod {
    public static final String MODID = 'testmod';
-
    public TestMod(IEventBus bus, ModContainer container) {
       Registry.register(bus);
    }
 }
+
 ```。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://XXXYJade17.github.io/NeoForge.github.io/post/01.-zhu-ce-wu-pin-he-fang-kuai.html">
@@ -451,8 +513,8 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 │       │   │   │   │   ├── example_block_01.json<br>
 │       │   │   │   │   └── example_block_02.json<br>
 │       │   │   │   └── item<br>
-│       │   │   │       ├── example_block_01_item.json<br>
-│       │   │   │       ├── example_block_02_item.json<br>
+│       │   │   │       ├── example_block_01.json<br>
+│       │   │   │       ├── example_block_02.json<br>
 │       │   │   │       ├── example_item_01.json<br>
 │       │   │   │       └── example_item_02.json<br>
 │       │   │   └── textures<br>
@@ -525,7 +587,17 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
   <span class="pl-ent">"item.testmod.example_item_02"</span>: <span class="pl-s"><span class="pl-pds">"</span>示例物品02<span class="pl-pds">"</span></span>
 }</pre></div>
 <h3>六.添加模型和材质文件</h3>
-<p>这里Block和Item略有不同</p>
+<p>先手动创建目录<br>
+├─resources<br>
+├── assets<br>
+│   ├── testmod<br>
+│   │   ├── lang<br>
+│   │   ├── models<br>
+│   │   │   ├── block<br>
+│   │   │   └── item<br>
+│   │   └── textures<br>
+│   │   │   ├── block<br>
+│   │   │   └── item</p>
 <ul>
 <li>Item</li>
 </ul>
@@ -537,49 +609,69 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 }</pre></div>
 <ul>
 <li>Block<br>
-先配置Block</li>
+先配置Block，这里采用六面同材质，根据需求可以自己更改</li>
 </ul>
 <div class="highlight highlight-source-json"><pre class="notranslate">{
- <span class="pl-ent">"parent"</span>: <span class="pl-s"><span class="pl-pds">"</span>minecraft:item/generated<span class="pl-pds">"</span></span>,        
- <span class="pl-ent">"textures"</span>: {
-   <span class="pl-ent">"layer0"</span>: <span class="pl-s"><span class="pl-pds">"</span>testmod:item/example_block_01<span class="pl-pds">"</span></span>    
- }
-}</pre></div>
-<p>再配置BlockItem</p>
-<div class="highlight highlight-source-json"><pre class="notranslate">{
-  <span class="pl-ent">"parent"</span>: <span class="pl-s"><span class="pl-pds">"</span>testmod:block/example_block_01<span class="pl-pds">"</span></span>,
+  <span class="pl-ent">"parent"</span>: <span class="pl-s"><span class="pl-pds">"</span>block/cube_all<span class="pl-pds">"</span></span>,
   <span class="pl-ent">"textures"</span>: {
-    <span class="pl-ent">"layer0"</span>: <span class="pl-s"><span class="pl-pds">"</span>testmod:item/example_block_01<span class="pl-pds">"</span></span>
+    <span class="pl-ent">"all"</span>: <span class="pl-s"><span class="pl-pds">"</span>testmod:block/example_block_01<span class="pl-pds">"</span></span>
   }
 }</pre></div>
+<p>之后还需要在 model/Item 里再添加BlockItem,文件名同block</p>
+<div class="highlight highlight-source-json"><pre class="notranslate">{
+  <span class="pl-ent">"parent"</span>: <span class="pl-s"><span class="pl-pds">"</span>testmod:block/example_block_01<span class="pl-pds">"</span></span>,
+ }</pre></div>
 <h2>附完整代码</h2>
 <h3>注册类</h3>
-<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-smi">Registry</span> {
-    <span class="pl-k">private</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-smi">DeferredRegister</span>&lt;<span class="pl-smi">Block</span>&gt; <span class="pl-c1">BLOCKS</span> = <span class="pl-smi">DeferredRegister</span>.<span class="pl-en">create</span>(<span class="pl-smi">Registries</span>.<span class="pl-c1">BLOCK</span>, <span class="pl-smi">TestMod</span>.<span class="pl-c1">MODID</span>);
-    <span class="pl-k">private</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-smi">DeferredRegister</span>&lt;<span class="pl-smi">Item</span>&gt; <span class="pl-c1">ITEMS</span> = <span class="pl-smi">DeferredRegister</span>.<span class="pl-en">create</span>(<span class="pl-smi">Registries</span>.<span class="pl-c1">ITEM</span>, <span class="pl-smi">TestMod</span>.<span class="pl-c1">MODID</span>);
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-s1">net</span>.<span class="pl-s1">minecraft</span>.<span class="pl-s1">core</span>.<span class="pl-s1">registries</span>.<span class="pl-s1">Registries</span>;
+<span class="pl-k">import</span> <span class="pl-s1">net</span>.<span class="pl-s1">minecraft</span>.<span class="pl-s1">world</span>.<span class="pl-s1">item</span>.<span class="pl-s1">BlockItem</span>;
+<span class="pl-k">import</span> <span class="pl-s1">net</span>.<span class="pl-s1">minecraft</span>.<span class="pl-s1">world</span>.<span class="pl-s1">item</span>.<span class="pl-s1">Item</span>;
+<span class="pl-k">import</span> <span class="pl-s1">net</span>.<span class="pl-s1">minecraft</span>.<span class="pl-s1">world</span>.<span class="pl-s1">level</span>.<span class="pl-s1">block</span>.<span class="pl-s1">Block</span>;
+<span class="pl-k">import</span> <span class="pl-s1">net</span>.<span class="pl-s1">minecraft</span>.<span class="pl-s1">world</span>.<span class="pl-s1">level</span>.<span class="pl-s1">block</span>.<span class="pl-s1">state</span>.<span class="pl-s1">BlockBehaviour</span>;
+<span class="pl-k">import</span> <span class="pl-s1">net</span>.<span class="pl-s1">neoforged</span>.<span class="pl-s1">bus</span>.<span class="pl-s1">api</span>.<span class="pl-s1">IEventBus</span>;
+<span class="pl-k">import</span> <span class="pl-s1">net</span>.<span class="pl-s1">neoforged</span>.<span class="pl-s1">neoforge</span>.<span class="pl-s1">registries</span>.<span class="pl-s1">DeferredHolder</span>;
+<span class="pl-k">import</span> <span class="pl-s1">net</span>.<span class="pl-s1">neoforged</span>.<span class="pl-s1">neoforge</span>.<span class="pl-s1">registries</span>.<span class="pl-s1">DeferredRegister</span>;
+<span class="pl-k">import</span> <span class="pl-s1">java</span>.<span class="pl-s1">util</span>.<span class="pl-s1">function</span>.<span class="pl-s1">Supplier</span>;
 
-    <span class="pl-k">private</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-smi">Supplier</span>&lt;<span class="pl-smi">Block</span>&gt; <span class="pl-c1">EXAMPLE_BLOCK_01</span> = <span class="pl-c1">BLOCKS</span>.<span class="pl-en">register</span>(<span class="pl-s">"example_block_01"</span>, () -&gt; <span class="pl-k">new</span> <span class="pl-smi">Block</span>(<span class="pl-smi">BlockBehaviour</span>.<span class="pl-s1">Properties</span>.<span class="pl-en">of</span>()));
-    <span class="pl-k">private</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-smi">DeferredHolder</span>&lt;<span class="pl-smi">Block</span>, <span class="pl-smi">Block</span>&gt; <span class="pl-c1">EXAMPLE_BLOCK_02</span> = <span class="pl-c1">BLOCKS</span>.<span class="pl-en">register</span>(<span class="pl-s">"example_block_02"</span>, () -&gt; <span class="pl-k">new</span> <span class="pl-smi">Block</span>(<span class="pl-smi">BlockBehaviour</span>.<span class="pl-s1">Properties</span>.<span class="pl-en">of</span>()));
-
-    <span class="pl-k">private</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-smi">Supplier</span>&lt;<span class="pl-smi">Item</span>&gt; <span class="pl-c1">EXAMPLE_BLOCK_01_ITEM</span> = <span class="pl-c1">ITEMS</span>.<span class="pl-en">register</span>(<span class="pl-s">"example_block_01"</span>,
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-smi">Registry</span> {
+    <span class="pl-c">//延迟注册器</span>
+    <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-smi">DeferredRegister</span>&lt;<span class="pl-smi">Block</span>&gt; <span class="pl-c1">BLOCKS</span> = <span class="pl-smi">DeferredRegister</span>.<span class="pl-en">create</span>(<span class="pl-smi">Registries</span>.<span class="pl-c1">BLOCK</span>, <span class="pl-smi">TestMod</span>.<span class="pl-c1">MODID</span>);
+    <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-smi">DeferredRegister</span>&lt;<span class="pl-smi">Item</span>&gt; <span class="pl-c1">ITEMS</span> = <span class="pl-smi">DeferredRegister</span>.<span class="pl-en">create</span>(<span class="pl-smi">Registries</span>.<span class="pl-c1">ITEM</span>, <span class="pl-smi">TestMod</span>.<span class="pl-c1">MODID</span>);
+    <span class="pl-c">//BLOCK</span>
+    <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-smi">Supplier</span>&lt;<span class="pl-smi">Block</span>&gt; <span class="pl-c1">EXAMPLE_BLOCK_01</span> = <span class="pl-c1">BLOCKS</span>.<span class="pl-en">register</span>(<span class="pl-s">"example_block_01"</span>,
+            () -&gt; <span class="pl-k">new</span> <span class="pl-smi">Block</span>(<span class="pl-smi">BlockBehaviour</span>.<span class="pl-s1">Properties</span>.<span class="pl-en">of</span>()));
+    <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-smi">DeferredHolder</span>&lt;<span class="pl-smi">Block</span>, <span class="pl-smi">Block</span>&gt; <span class="pl-c1">EXAMPLE_BLOCK_02</span> = <span class="pl-c1">BLOCKS</span>.<span class="pl-en">register</span>(<span class="pl-s">"example_block_02"</span>,
+            () -&gt; <span class="pl-k">new</span> <span class="pl-smi">Block</span>(<span class="pl-smi">BlockBehaviour</span>.<span class="pl-s1">Properties</span>.<span class="pl-en">of</span>()));
+    <span class="pl-c">//BLOCK_ITEM</span>
+    <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-smi">Supplier</span>&lt;<span class="pl-smi">Item</span>&gt; <span class="pl-c1">EXAMPLE_BLOCK_01_ITEM</span> = <span class="pl-c1">ITEMS</span>.<span class="pl-en">register</span>(<span class="pl-s">"example_block_01"</span>,
             () -&gt; <span class="pl-k">new</span> <span class="pl-smi">BlockItem</span>(<span class="pl-c1">EXAMPLE_BLOCK_01</span>.<span class="pl-en">get</span>(), <span class="pl-k">new</span> <span class="pl-smi">Item</span>.<span class="pl-smi">Properties</span>()));
-    <span class="pl-k">private</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-smi">Supplier</span>&lt;<span class="pl-smi">Item</span>&gt; <span class="pl-c1">EXAMPLE_BLOCK_02_ITEM</span> = <span class="pl-c1">ITEMS</span>.<span class="pl-en">register</span>(<span class="pl-s">"example_block_02"</span>,
+    <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-smi">DeferredHolder</span>&lt;<span class="pl-smi">Item</span>,<span class="pl-smi">Item</span>&gt; <span class="pl-c1">EXAMPLE_BLOCK_02_ITEM</span> = <span class="pl-c1">ITEMS</span>.<span class="pl-en">register</span>(<span class="pl-s">"example_block_02"</span>,
             () -&gt; <span class="pl-k">new</span> <span class="pl-smi">BlockItem</span>(<span class="pl-c1">EXAMPLE_BLOCK_02</span>.<span class="pl-en">get</span>(), <span class="pl-k">new</span> <span class="pl-smi">Item</span>.<span class="pl-smi">Properties</span>()));
-
-
-    <span class="pl-k">private</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-smi">Supplier</span>&lt;<span class="pl-smi">Item</span>&gt; <span class="pl-c1">EXAMPLE_ITEM_01</span> = <span class="pl-c1">ITEMS</span>.<span class="pl-en">register</span>(<span class="pl-s">"example_item_01"</span>, () -&gt; <span class="pl-k">new</span> <span class="pl-smi">Item</span>(<span class="pl-k">new</span> <span class="pl-smi">Item</span>.<span class="pl-smi">Properties</span>()));
-    <span class="pl-k">private</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-smi">DeferredHolder</span>&lt;<span class="pl-smi">Item</span>, <span class="pl-smi">Item</span>&gt; <span class="pl-c1">EXAMPLE_ITEM_02</span> = <span class="pl-c1">ITEMS</span>.<span class="pl-en">register</span>(<span class="pl-s">"example_item_02"</span>, () -&gt; <span class="pl-k">new</span> <span class="pl-smi">Item</span>(<span class="pl-k">new</span> <span class="pl-smi">Item</span>.<span class="pl-smi">Properties</span>()));
-
+    <span class="pl-c">//ITEM</span>
+    <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-smi">Supplier</span>&lt;<span class="pl-smi">Item</span>&gt;  <span class="pl-c1">EXAMPLE_ITEM_01</span>= <span class="pl-c1">ITEMS</span>.<span class="pl-en">register</span>(<span class="pl-s">"example_item_01"</span>,
+            () -&gt; <span class="pl-k">new</span> <span class="pl-smi">Item</span>(<span class="pl-k">new</span> <span class="pl-smi">Item</span>.<span class="pl-smi">Properties</span>()));
+    <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-smi">DeferredHolder</span>&lt;<span class="pl-smi">Item</span>, <span class="pl-smi">Item</span>&gt; <span class="pl-c1">EXAMPLE_ITEM_02</span> = <span class="pl-c1">ITEMS</span>.<span class="pl-en">register</span>(<span class="pl-s">"example_item_02"</span>,
+            () -&gt; <span class="pl-k">new</span> <span class="pl-smi">Item</span>(<span class="pl-k">new</span> <span class="pl-smi">Item</span>.<span class="pl-smi">Properties</span>()));
+    <span class="pl-c">//BLOCK STATE</span>
+    <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-smi">Supplier</span>&lt;<span class="pl-smi">Block</span>&gt; <span class="pl-c1">STATE_EXAMPLE_BLOCK</span> = <span class="pl-c1">BLOCKS</span>.<span class="pl-en">register</span>(<span class="pl-s">"state_example_block"</span>,
+            () -&gt; <span class="pl-k">new</span> <span class="pl-smi">StateExampleBlock</span>(<span class="pl-smi">BlockBehaviour</span>.<span class="pl-s1">Properties</span>.<span class="pl-en">of</span>()));
+    <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-smi">Supplier</span>&lt;<span class="pl-smi">Item</span>&gt; <span class="pl-c1">STATE_EXAMPLE_BLOCK_ITEM</span> = <span class="pl-c1">ITEMS</span>.<span class="pl-en">register</span>(<span class="pl-s">"state_example_block"</span>,
+            () -&gt; <span class="pl-k">new</span> <span class="pl-smi">BlockItem</span>(<span class="pl-c1">STATE_EXAMPLE_BLOCK</span>.<span class="pl-en">get</span>(), <span class="pl-k">new</span> <span class="pl-smi">Item</span>.<span class="pl-smi">Properties</span>()));
+    <span class="pl-c">//注册方法</span>
     <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-smi">void</span> <span class="pl-en">register</span>(<span class="pl-smi">IEventBus</span> <span class="pl-s1">bus</span>){
             <span class="pl-c1">BLOCKS</span>.<span class="pl-en">register</span>(<span class="pl-s1">bus</span>);
             <span class="pl-c1">ITEMS</span>.<span class="pl-en">register</span>(<span class="pl-s1">bus</span>);
+            <span class="pl-smi">ModCreativeTab</span>.<span class="pl-en">register</span>(<span class="pl-s1">bus</span>);
     }
 }</pre></div>
 <h3>主程序</h3>
-<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-c1">@</span><span class="pl-c1">Mod</span>(<span class="pl-smi">TestMod</span>.<span class="pl-c1">MODID</span>)
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-s1">net</span>.<span class="pl-s1">neoforged</span>.<span class="pl-s1">bus</span>.<span class="pl-s1">api</span>.<span class="pl-s1">IEventBus</span>;
+<span class="pl-k">import</span> <span class="pl-s1">net</span>.<span class="pl-s1">neoforged</span>.<span class="pl-s1">fml</span>.<span class="pl-s1">ModContainer</span>;
+<span class="pl-k">import</span> <span class="pl-s1">net</span>.<span class="pl-s1">neoforged</span>.<span class="pl-s1">fml</span>.<span class="pl-s1">common</span>.<span class="pl-s1">Mod</span>;
+
+<span class="pl-c1">@</span><span class="pl-c1">Mod</span>(<span class="pl-smi">TestMod</span>.<span class="pl-c1">MODID</span>)
 <span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-smi">TestMod</span> {
    <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-smi">String</span> <span class="pl-c1">MODID</span> = <span class="pl-s">"testmod"</span>;
-
    <span class="pl-k">public</span> <span class="pl-smi">TestMod</span>(<span class="pl-smi">IEventBus</span> <span class="pl-s1">bus</span>, <span class="pl-smi">ModContainer</span> <span class="pl-s1">container</span>) {
       <span class="pl-smi">Registry</span>.<span class="pl-en">register</span>(<span class="pl-s1">bus</span>);
    }
