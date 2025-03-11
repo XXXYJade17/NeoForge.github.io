@@ -32,6 +32,8 @@ src
 │ │ │ │ ├── block
 │ │ │ │ │ ├── state_exampe_block_off.json
 │ │ │ │ │ └── state_exampe_block_on.json
+│ │ │ │ └── item
+│ │ │ │ │ └── state_exampe_block.json
 │ │ │ └── textures
 │ │ │ │ └── block
 │ │ │ │    ├── state_exampe_block_off.json.png
@@ -73,6 +75,8 @@ src
 │ │ │ │ ├── block
 │ │ │ │ │ ├── state_exampe_block_off.json
 │ │ │ │ │ └── state_exampe_block_on.json
+│ │ │ │ └── item
+│ │ │ │ │ └── state_exampe_block.json
 │ │ │ └── textures
 │ │ │ │ └── block
 │ │ │ │    ├── state_exampe_block_off.json.png
@@ -183,6 +187,8 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 │ │ │ │ ├── block<br>
 │ │ │ │ │ ├── state_exampe_block_off.json<br>
 │ │ │ │ │ └── state_exampe_block_on.json<br>
+│ │ │ │ └── item<br>
+│ │ │ │ │ └── state_exampe_block.json<br>
 │ │ │ └── textures<br>
 │ │ │ │ └── block<br>
 │ │ │ │    ├── state_exampe_block_off.json.png<br>
@@ -257,7 +263,66 @@ Block.UPDATE_ALL :  上传状态</li>
 <li>(可选)  level.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_HIT, SoundSource.BLOCKS, 1.0F, 1.0F) :<br>
 播放紫水晶方块被击打的音效</li>
 </ul>
-<h2>六.添加资源文件</h2></div>
+<h2>六.添加资源文件</h2>
+<p>先在BlockState里添加state_example_block.json</p>
+<div class="highlight highlight-source-json"><pre class="notranslate">{
+  <span class="pl-ent">"variants"</span>: {
+    <span class="pl-ent">"lit=false"</span>: {
+      <span class="pl-ent">"model"</span>: <span class="pl-s"><span class="pl-pds">"</span>testmod:block/state_example_block_off<span class="pl-pds">"</span></span>
+    },
+    <span class="pl-ent">"lit=true"</span>:  {
+      <span class="pl-ent">"model"</span>: <span class="pl-s"><span class="pl-pds">"</span>testmod:block/state_example_block_on<span class="pl-pds">"</span></span>
+    }
+  }
+}</pre></div>
+<p>然后根据前面添加Block和BlockItem一样添加对应的json文件即可</p>
+<h2>*如果原来的方块出现了吞材质的情况，在blockstate里把所有注册的Block都添加一遍就行</h2>
+<p>默认格式</p>
+<div class="highlight highlight-source-json"><pre class="notranslate">{
+  <span class="pl-ent">"variants"</span>: {
+    <span class="pl-ent">""</span>: {
+      <span class="pl-ent">"model"</span>: <span class="pl-s"><span class="pl-pds">"</span>testmod:block/example_block_01<span class="pl-pds">"</span></span>
+    }
+  }
+}</pre></div>
+<h2>附完整代码</h2>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-s1">net</span>.<span class="pl-s1">minecraft</span>.<span class="pl-s1">core</span>.<span class="pl-s1">BlockPos</span>;
+<span class="pl-k">import</span> <span class="pl-s1">net</span>.<span class="pl-s1">minecraft</span>.<span class="pl-s1">sounds</span>.<span class="pl-s1">SoundEvents</span>;
+<span class="pl-k">import</span> <span class="pl-s1">net</span>.<span class="pl-s1">minecraft</span>.<span class="pl-s1">sounds</span>.<span class="pl-s1">SoundSource</span>;
+<span class="pl-k">import</span> <span class="pl-s1">net</span>.<span class="pl-s1">minecraft</span>.<span class="pl-s1">world</span>.<span class="pl-s1">InteractionHand</span>;
+<span class="pl-k">import</span> <span class="pl-s1">net</span>.<span class="pl-s1">minecraft</span>.<span class="pl-s1">world</span>.<span class="pl-s1">InteractionResult</span>;
+<span class="pl-k">import</span> <span class="pl-s1">net</span>.<span class="pl-s1">minecraft</span>.<span class="pl-s1">world</span>.<span class="pl-s1">entity</span>.<span class="pl-s1">player</span>.<span class="pl-s1">Player</span>;
+<span class="pl-k">import</span> <span class="pl-s1">net</span>.<span class="pl-s1">minecraft</span>.<span class="pl-s1">world</span>.<span class="pl-s1">level</span>.<span class="pl-s1">Level</span>;
+<span class="pl-k">import</span> <span class="pl-s1">net</span>.<span class="pl-s1">minecraft</span>.<span class="pl-s1">world</span>.<span class="pl-s1">level</span>.<span class="pl-s1">block</span>.<span class="pl-s1">Block</span>;
+<span class="pl-k">import</span> <span class="pl-s1">net</span>.<span class="pl-s1">minecraft</span>.<span class="pl-s1">world</span>.<span class="pl-s1">level</span>.<span class="pl-s1">block</span>.<span class="pl-s1">state</span>.<span class="pl-s1">BlockState</span>;
+<span class="pl-k">import</span> <span class="pl-s1">net</span>.<span class="pl-s1">minecraft</span>.<span class="pl-s1">world</span>.<span class="pl-s1">level</span>.<span class="pl-s1">block</span>.<span class="pl-s1">state</span>.<span class="pl-s1">StateDefinition</span>;
+<span class="pl-k">import</span> <span class="pl-s1">net</span>.<span class="pl-s1">minecraft</span>.<span class="pl-s1">world</span>.<span class="pl-s1">level</span>.<span class="pl-s1">block</span>.<span class="pl-s1">state</span>.<span class="pl-s1">properties</span>.<span class="pl-s1">BooleanProperty</span>;
+<span class="pl-k">import</span> <span class="pl-s1">net</span>.<span class="pl-s1">minecraft</span>.<span class="pl-s1">world</span>.<span class="pl-s1">phys</span>.<span class="pl-s1">BlockHitResult</span>;
+
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-smi">StateExampleBlock</span> <span class="pl-k">extends</span> <span class="pl-smi">Block</span> {
+    <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-smi">BooleanProperty</span> <span class="pl-c1">LIT</span> = <span class="pl-smi">BooleanProperty</span>.<span class="pl-en">create</span>(<span class="pl-s">"lit"</span>); <span class="pl-c">// 定义方块状态属性</span>
+
+
+    <span class="pl-k">public</span> <span class="pl-smi">StateExampleBlock</span>(<span class="pl-smi">Properties</span> <span class="pl-s1">properties</span>) {
+        <span class="pl-en">super</span>(<span class="pl-s1">properties</span>.<span class="pl-en">lightLevel</span>(<span class="pl-s1">state</span> -&gt; <span class="pl-s1">state</span>.<span class="pl-en">getValue</span>(<span class="pl-c1">LIT</span>) ? <span class="pl-c1">15</span> : <span class="pl-c1">0</span>)); <span class="pl-c">// 根据 LIT 属性设置光照</span>
+        <span class="pl-smi">this</span>.<span class="pl-en">registerDefaultState</span>(<span class="pl-smi">this</span>.<span class="pl-s1">stateDefinition</span>.<span class="pl-en">any</span>().<span class="pl-en">setValue</span>(<span class="pl-c1">LIT</span>, <span class="pl-c1">false</span>)); <span class="pl-c">// 默认状态为未发光</span>
+    }
+
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">protected</span> <span class="pl-smi">void</span> <span class="pl-en">createBlockStateDefinition</span>(<span class="pl-smi">StateDefinition</span>.<span class="pl-smi">Builder</span>&lt;<span class="pl-smi">Block</span>, <span class="pl-smi">BlockState</span>&gt; <span class="pl-s1">builder</span>) {
+        <span class="pl-s1">builder</span>.<span class="pl-en">add</span>(<span class="pl-c1">LIT</span>); <span class="pl-c">// 注册属性</span>
+    }
+
+    <span class="pl-c1">@</span><span class="pl-c1">Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">InteractionResult</span> <span class="pl-en">use</span>(<span class="pl-smi">BlockState</span> <span class="pl-s1">state</span>, <span class="pl-smi">Level</span> <span class="pl-s1">level</span>, <span class="pl-smi">BlockPos</span> <span class="pl-s1">pos</span>, <span class="pl-smi">Player</span> <span class="pl-s1">player</span>, <span class="pl-smi">InteractionHand</span> <span class="pl-s1">hand</span>, <span class="pl-smi">BlockHitResult</span> <span class="pl-s1">hit</span>) {
+        <span class="pl-k">if</span> (!<span class="pl-s1">level</span>.<span class="pl-s1">isClientSide</span>) {
+            <span class="pl-smi">boolean</span> <span class="pl-s1">isLit</span> = <span class="pl-s1">state</span>.<span class="pl-en">getValue</span>(<span class="pl-c1">LIT</span>);
+            <span class="pl-s1">level</span>.<span class="pl-en">setBlock</span>(<span class="pl-s1">pos</span>, <span class="pl-s1">state</span>.<span class="pl-en">setValue</span>(<span class="pl-c1">LIT</span>, !<span class="pl-s1">isLit</span>), <span class="pl-smi">Block</span>.<span class="pl-c1">UPDATE_ALL</span>); <span class="pl-c">// 切换发光状态</span>
+            <span class="pl-s1">level</span>.<span class="pl-en">playSound</span>(<span class="pl-c1">null</span>, <span class="pl-s1">pos</span>, <span class="pl-smi">SoundEvents</span>.<span class="pl-c1">AMETHYST_BLOCK_HIT</span>, <span class="pl-smi">SoundSource</span>.<span class="pl-c1">BLOCKS</span>, <span class="pl-c1">1.0F</span>, <span class="pl-c1">1.0F</span>);
+        }
+        <span class="pl-k">return</span> <span class="pl-smi">InteractionResult</span>.<span class="pl-en">sidedSuccess</span>(<span class="pl-s1">level</span>.<span class="pl-s1">isClientSide</span>);
+    }
+}</pre></div></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>

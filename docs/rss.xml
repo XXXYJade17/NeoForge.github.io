@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>XXXYJade's NeoForge-1.20.4</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link><description>学习笔记</description><copyright>XXXYJade's NeoForge-1.20.4</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/196541443?v=4</url><title>avatar</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link></image><lastBuildDate>Tue, 11 Mar 2025 04:38:23 +0000</lastBuildDate><managingEditor>XXXYJade's NeoForge-1.20.4</managingEditor><ttl>60</ttl><webMaster>XXXYJade's NeoForge-1.20.4</webMaster><item><title>03.自定义BlockState</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/03.-zi-ding-yi-BlockState.html</link><description>## 项目结构
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>XXXYJade's NeoForge-1.20.4</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link><description>学习笔记</description><copyright>XXXYJade's NeoForge-1.20.4</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/196541443?v=4</url><title>avatar</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link></image><lastBuildDate>Tue, 11 Mar 2025 05:22:55 +0000</lastBuildDate><managingEditor>XXXYJade's NeoForge-1.20.4</managingEditor><ttl>60</ttl><webMaster>XXXYJade's NeoForge-1.20.4</webMaster><item><title>03.自定义BlockState</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/03.-zi-ding-yi-BlockState.html</link><description>## 项目结构
 src
 ├── main
 │ ├── java
@@ -21,6 +21,8 @@ src
 │ │ │ │ ├── block
 │ │ │ │ │ ├── state_exampe_block_off.json
 │ │ │ │ │ └── state_exampe_block_on.json
+│ │ │ │ └── item
+│ │ │ │ │ └── state_exampe_block.json
 │ │ │ └── textures
 │ │ │ │ └── block
 │ │ │ │    ├── state_exampe_block_off.json.png
