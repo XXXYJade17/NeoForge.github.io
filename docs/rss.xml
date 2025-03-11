@@ -1,5 +1,55 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>XXXYJade's NeoForge-1.20.4</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link><description>学习笔记</description><copyright>XXXYJade's NeoForge-1.20.4</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/196541443?v=4</url><title>avatar</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link></image><lastBuildDate>Tue, 11 Mar 2025 05:22:55 +0000</lastBuildDate><managingEditor>XXXYJade's NeoForge-1.20.4</managingEditor><ttl>60</ttl><webMaster>XXXYJade's NeoForge-1.20.4</webMaster><item><title>03.自定义BlockState</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/03.-zi-ding-yi-BlockState.html</link><description>## 项目结构
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>XXXYJade's NeoForge-1.20.4</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link><description>学习笔记</description><copyright>XXXYJade's NeoForge-1.20.4</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/196541443?v=4</url><title>avatar</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link></image><lastBuildDate>Tue, 11 Mar 2025 06:24:26 +0000</lastBuildDate><managingEditor>XXXYJade's NeoForge-1.20.4</managingEditor><ttl>60</ttl><webMaster>XXXYJade's NeoForge-1.20.4</webMaster><item><title>04.自定物品属性覆盖</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/04.-zi-ding-wu-pin-shu-xing-fu-gai.html</link><description>## 一.需要先注册一个物品，这里采用之前的EXAMPLE_ITEM_01
+[参考链接](https://xxxyjade17.github.io/NeoForge.github.io/post/01.-zhu-ce-wu-pin-he-fang-kuai.html)
+## 二.添加物品属性覆盖
+```java
+@Mod.EventBusSubscriber(modid = TestMod.MODID,bus = Mod.EventBusSubscriber.Bus.MOD,value = Dist.CLIENT)
+public class PropertyRegistry {
+    @SubscribeEvent
+    public static void propertyOverrideRegistry(FMLClientSetupEvent event){
+        event.enqueueWork(()-&gt;{     //加入主线程
+            ItemProperties.register(Registry.EXAMPLE_ITEM_01.get(),
+                new ResourceLocation(TestMod.MODID,'size'),
+                    (itemStack, level, livingEntity, num)-&gt;{
+                        return itemStack.getCount();
+            });
+        });
+    }
+}
+```
+-  new ResourceLocation(TestMod.MODID,'size') ： 这里创建了一个名为size的堆叠属性
+- (itemStack, level, livingEntity, num)-&gt;{return itemStack.getCount();} :   这里返回堆叠数量
+## 三. 修改json配置文件
+```json
+{
+ 'parent': 'minecraft:item/generated',
+ 'textures': {
+   'layer0': 'item/iron_ingot'
+ }
+}
+```
+这是原来的配置文件（example_item_01.json),这里我们直接引用铁锭
+我们在后面继续添加需要的配置文件
+```json
+{
+'overrides': [
+    {
+      'predicate': {
+        'testmod:size': 16
+      },
+      'model': 'item/gold_ingot'
+    },
+    {
+      'predicate': {
+        'testmod:size': 32
+      },
+      'model': 'item/diamond'
+    }
+  ]
+}
+```
+表示堆叠数量到16时，材质变金锭，到32时变钻石
+以此类推可以改成我们想要的状态或属性。</description><guid isPermaLink="true">https://XXXYJade17.github.io/NeoForge.github.io/post/04.-zi-ding-wu-pin-shu-xing-fu-gai.html</guid><pubDate>Tue, 11 Mar 2025 06:24:01 +0000</pubDate></item><item><title>03.自定义BlockState</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/03.-zi-ding-yi-BlockState.html</link><description>## 项目结构
 src
 ├── main
 │ ├── java
