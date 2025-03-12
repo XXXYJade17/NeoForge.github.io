@@ -1,6 +1,119 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>XXXYJade's NeoForge-1.20.4</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link><description>学习笔记</description><copyright>XXXYJade's NeoForge-1.20.4</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/196541443?v=4</url><title>avatar</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link></image><lastBuildDate>Wed, 12 Mar 2025 09:18:24 +0000</lastBuildDate><managingEditor>XXXYJade's NeoForge-1.20.4</managingEditor><ttl>60</ttl><webMaster>XXXYJade's NeoForge-1.20.4</webMaster><item><title>08.战利品表</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/08.-zhan-li-pin-biao.html</link><description>## 一.什么是战利品表
-战利品表是指你破坏了方块或者打死了实体的时候掉落的东西，也包含了奖励箱的内容。</description><guid isPermaLink="true">https://XXXYJade17.github.io/NeoForge.github.io/post/08.-zhan-li-pin-biao.html</guid><pubDate>Wed, 12 Mar 2025 09:18:00 +0000</pubDate></item><item><title>06.自定义工具</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/06.-zi-ding-yi-gong-ju.html</link><description>## 一. 老规矩现有Item再有工具，先注册一个[EXAMPLE_SWORD](https://xxxyjade17.github.io/NeoForge.github.io/post/01.-zhu-ce-wu-pin-he-fang-kuai.html)(示例剑)
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>XXXYJade's NeoForge-1.20.4</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link><description>学习笔记</description><copyright>XXXYJade's NeoForge-1.20.4</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/196541443?v=4</url><title>avatar</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link></image><lastBuildDate>Wed, 12 Mar 2025 11:33:02 +0000</lastBuildDate><managingEditor>XXXYJade's NeoForge-1.20.4</managingEditor><ttl>60</ttl><webMaster>XXXYJade's NeoForge-1.20.4</webMaster><item><title>08.战利品表</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/08.-zhan-li-pin-biao.html</link><description>## 一.什么是战利品表
+战利品表是指你破坏了方块或者打死了实体的时候掉落的东西，也包含了奖励箱的内容。</description><guid isPermaLink="true">https://XXXYJade17.github.io/NeoForge.github.io/post/08.-zhan-li-pin-biao.html</guid><pubDate>Wed, 12 Mar 2025 09:18:00 +0000</pubDate></item><item><title>07.自定义装备</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/07.-zi-ding-yi-zhuang-bei.html</link><description>## 一.创建一个枚举类实现 ArmorMaterial 接口,并且实现重写方法
+```java
+public enum ExampleArmorMaterial implements ArmorMaterial {
+    private final String name;
+    private final int durabilityMultiplier;
+    private final EnumMap&lt;ArmorItem.Type, Integer&gt; protectionFunctionForType;
+    private final int enchantmentValue;
+    private final SoundEvent sound;
+    private final float toughness;
+    private final float knockbackResistance;
+    private final Supplier&lt;Ingredient&gt; repairIngredient;
+    private static final EnumMap&lt;ArmorItem.Type, Integer&gt; HEALTH_FUNCTION_FOR_TYPE = 
+            Util.make(new EnumMap&lt;&gt;(ArmorItem.Type.class), map -&gt; {
+                map.put(ArmorItem.Type.BOOTS, 100);
+                map.put(ArmorItem.Type.LEGGINGS,100);
+                map.put(ArmorItem.Type.CHESTPLATE,100);
+                map.put(ArmorItem.Type.HELMET, 100);
+            }); 
+    ExampleArmorMaterial(
+            String name,
+            int durabilityMultiplier,
+            EnumMap&lt;ArmorItem.Type, Integer&gt; protectionFunctionForType,
+            int enchantmentValue,
+            SoundEvent sound,
+            float toughness,
+            float knockbackResistance,
+            Supplier&lt;Ingredient&gt; repairIngredient
+    ){
+        this.name=name;
+        this.durabilityMultiplier=durabilityMultiplier;
+        this.protectionFunctionForType=protectionFunctionForType;
+        this.enchantmentValue=enchantmentValue;
+        this.sound=sound;
+        this.toughness=toughness;
+        this.knockbackResistance=knockbackResistance;
+        this.repairIngredient=repairIngredient;
+    }
+
+    @Override
+    public int getDurabilityForType(ArmorItem.Type type) {
+        return HEALTH_FUNCTION_FOR_TYPE.get(type) * this.durabilityMultiplier;    //倍数与基础耐久相乘得到总耐久
+    }
+
+    @Override
+    public int getDefenseForType(ArmorItem.Type type) {
+        return this.protectionFunctionForType.get(type);
+    }
+
+    @Override
+    public int getEnchantmentValue() {
+        return enchantmentValue;
+    }
+
+    @Override
+    public SoundEvent getEquipSound() {
+        return sound;
+    }
+
+    @Override
+    public Ingredient getRepairIngredient() {
+        return repairIngredient.get();
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public float getToughness() {
+        return toughness;
+    }
+
+    @Override
+    public float getKnockbackResistance() {
+        return knockbackResistance;
+    }
+}
+```
+变量含义：
+- name : 装备材质名
+- durabilityMultiplier : 耐久倍数,与基础耐久相乘得到总耐久
+- protectionFunctionForType : 存储护甲的enummap
+- enchantmentValue : 附魔能力值
+- sound : 声音
+- toughness : 盔甲韧性（减少高伤害攻击的穿透效果）
+- knockbackResistance : 击退抗性百分比（0.0表示无抗性，1.0完全免疫击退）
+- repairIngredient : 修复材料
+## 二.在类中创建自定义的材质实例，基本与工具相同
+```java
+Example('example',
+            50,     //耐久倍数
+            Util.make(new EnumMap&lt;&gt;(ArmorItem.Type.class),map-&gt;{    //护甲表
+        map.put(ArmorItem.Type.BOOTS, 20);     //鞋
+        map.put(ArmorItem.Type.LEGGINGS, 20);  //裤
+        map.put(ArmorItem.Type.CHESTPLATE, 20);//甲
+        map.put(ArmorItem.Type.HELMET, 20);    //头
+    }),20,  //附魔等级
+            SoundEvents.ARMOR_EQUIP_DIAMOND,    //声音
+            10.0F,  //韧性
+            1.0F,   //击退抗性百分比
+            ()-&gt;Ingredient.of(Registry.EXAMPLE_ITEM_01.get())); //修复物品
+```
+## 三.最后[注册](https://xxxyjade17.github.io/NeoForge.github.io/post/01.-zhu-ce-wu-pin-he-fang-kuai.html)装备
+```java
+    public static final Supplier&lt;Item&gt; EXAMPLE_HELMET=ITEMS.register('example_helmet',
+            ()-&gt;new ArmorItem(ExampleArmorMaterial.Example,ArmorItem.Type.HELMET,new Item.Properties()));
+    public static final Supplier&lt;Item&gt; EXAMPLE_CHESTPLATE=ITEMS.register('example_chestplate',
+            ()-&gt;new ArmorItem(ExampleArmorMaterial.Example,ArmorItem.Type.HELMET,new Item.Properties()));
+    public static final Supplier&lt;Item&gt; EXAMPLE_LEGGINGS=ITEMS.register('example_leggings',
+            ()-&gt;new ArmorItem(ExampleArmorMaterial.Example,ArmorItem.Type.HELMET,new Item.Properties()));
+    public static final Supplier&lt;Item&gt; EXAMPLE_BOOTS=ITEMS.register('example_boots',
+            ()-&gt;new ArmorItem(ExampleArmorMaterial.Example,ArmorItem.Type.HELMET,new Item.Properties()));
+```。</description><guid isPermaLink="true">https://XXXYJade17.github.io/NeoForge.github.io/post/07.-zi-ding-yi-zhuang-bei.html</guid><pubDate>Wed, 12 Mar 2025 08:29:35 +0000</pubDate></item><item><title>06.自定义工具</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/06.-zi-ding-yi-gong-ju.html</link><description>## 一. 老规矩现有Item再有工具，先注册一个[EXAMPLE_SWORD](https://xxxyjade17.github.io/NeoForge.github.io/post/01.-zhu-ce-wu-pin-he-fang-kuai.html)(示例剑)
 ## 二. 创建一个枚举类ExampleTier,实现 Tier 接口
 Tier可以用于表示Minecraft中自定义工具的等级或品质
 如果想要其他工具实现其他接口就行了，如镐（pickaxe）等等...
