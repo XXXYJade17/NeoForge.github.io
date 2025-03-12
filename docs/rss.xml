@@ -1,5 +1,28 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>XXXYJade's NeoForge-1.20.4</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link><description>学习笔记</description><copyright>XXXYJade's NeoForge-1.20.4</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/196541443?v=4</url><title>avatar</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link></image><lastBuildDate>Wed, 12 Mar 2025 11:33:02 +0000</lastBuildDate><managingEditor>XXXYJade's NeoForge-1.20.4</managingEditor><ttl>60</ttl><webMaster>XXXYJade's NeoForge-1.20.4</webMaster><item><title>08.战利品表</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/08.-zhan-li-pin-biao.html</link><description>## 一.什么是战利品表
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>XXXYJade's NeoForge-1.20.4</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link><description>学习笔记</description><copyright>XXXYJade's NeoForge-1.20.4</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/196541443?v=4</url><title>avatar</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link></image><lastBuildDate>Wed, 12 Mar 2025 11:54:21 +0000</lastBuildDate><managingEditor>XXXYJade's NeoForge-1.20.4</managingEditor><ttl>60</ttl><webMaster>XXXYJade's NeoForge-1.20.4</webMaster><item><title>09.Tag</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/09.Tag.html</link><description>## 一.什么是Tag
+Tag就是用于设置你注册的方块挖掘速度和挖掘等级之类的
+## 二.项目结构
+这里以挖掘等级最低为石镐为例,先手动创建目录
+└─data
+    ├─testmod
+    └─minecraft
+        └─tags
+            └─blocks
+                ├─mineable
+                │   └─pickaxe.json
+                └─needs_stone_tool.json
+## 三.编辑Tag的json文件
+**needs_stone_tool.json**
+```json
+{
+  'replace': false,
+  'values': [
+    'testmod:example_block_01',
+  ]
+}
+```
+- replace : 就是是否取代原版文件，这里false就是在原版基础上添加
+- valuse : 就是个列表，放你想要设置的方块。</description><guid isPermaLink="true">https://XXXYJade17.github.io/NeoForge.github.io/post/09.Tag.html</guid><pubDate>Wed, 12 Mar 2025 11:53:47 +0000</pubDate></item><item><title>08.战利品表</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/08.-zhan-li-pin-biao.html</link><description>## 一.什么是战利品表
 战利品表是指你破坏了方块或者打死了实体的时候掉落的东西，也包含了奖励箱的内容。</description><guid isPermaLink="true">https://XXXYJade17.github.io/NeoForge.github.io/post/08.-zhan-li-pin-biao.html</guid><pubDate>Wed, 12 Mar 2025 09:18:00 +0000</pubDate></item><item><title>07.自定义装备</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/07.-zi-ding-yi-zhuang-bei.html</link><description>## 一.创建一个枚举类实现 ArmorMaterial 接口,并且实现重写方法
 ```java
 public enum ExampleArmorMaterial implements ArmorMaterial {
