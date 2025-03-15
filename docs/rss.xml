@@ -1,5 +1,227 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>XXXYJade's NeoForge-1.20.4</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link><description>学习笔记</description><copyright>XXXYJade's NeoForge-1.20.4</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/196541443?v=4</url><title>avatar</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link></image><lastBuildDate>Fri, 14 Mar 2025 13:36:24 +0000</lastBuildDate><managingEditor>XXXYJade's NeoForge-1.20.4</managingEditor><ttl>60</ttl><webMaster>XXXYJade's NeoForge-1.20.4</webMaster><item><title>10.方块实体</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/10.-fang-kuai-shi-ti.html</link><description>## 一. 什么是方块实体
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>XXXYJade's NeoForge-1.20.4</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link><description>学习笔记</description><copyright>XXXYJade's NeoForge-1.20.4</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/196541443?v=4</url><title>avatar</title><link>https://XXXYJade17.github.io/NeoForge.github.io</link></image><lastBuildDate>Sat, 15 Mar 2025 15:40:15 +0000</lastBuildDate><managingEditor>XXXYJade's NeoForge-1.20.4</managingEditor><ttl>60</ttl><webMaster>XXXYJade's NeoForge-1.20.4</webMaster><item><title>11.Entity实体</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/11.Entity-shi-ti.html</link><description>## 一.创建三个类分别继承 Entity , EntityRenderer , EntityModel&lt;&gt;
+```java
+public class FlyingSwordEntity extends Entity {
+    public FlyingSwordEntity(EntityType&lt;?&gt; entityType, Level level){
+        super(entityType, level);
+    }
+}
+```
+```java
+public class FlyingSwordEntityRenderer extends EntityRenderer {
+    public FlyingSwordEntityRenderer(EntityRendererProvider.Context context) {
+        super(context);
+        flyingSwordModel = new FlyingSwordModel(context.bakeLayer(FlyingSwordModel.LAYER_LOCATION));
+    }
+}
+```
+```java
+public class FlyingSwordModel extends EntityModel&lt;FlyingSwordEntity&gt; {
+    private final ModelPart body;
+    public static final ModelLayerLocation LAYER_LOCATION = 
+        new ModelLayerLocation(new ResourceLocation(TestMod.MODID, 'flying_sword_entity'), 'main');
+
+    public FlyingSwordModel(ModelPart modelPart) {
+        this.body = modelPart.getChild('body');
+    }
+}
+```
+## 二.完善FlyingSwordEntity
+```java
+ private static final EntityDataAccessor&lt;Integer&gt; COUNTER =
+    SynchedEntityData.defineId(FlyingSwordEntity.class, EntityDataSerializers.INT);
+
+@Override
+public void tick() {
+    Integer i=this.entityData.get(COUNTER); //获取实体数据
+    if(!this.level().isClientSide()){   //服务端执行逻辑
+        this.entityData.set(COUNTER,i+1);   //设置实体数据
+    }
+    super.tick();
+}
+@Override
+protected void defineSynchedData() {
+    this.entityData.define(COUNTER,0);
+}
+@Override
+protected void readAdditionalSaveData(CompoundTag compoundTag) {
+    this.entityData.set(COUNTER,compoundTag.getInt('counter'));
+}
+@Override
+protected void addAdditionalSaveData(CompoundTag compoundTag) {
+    compoundTag.putInt('counter',this.entityData.get(COUNTER));
+}
+```
+- COUNTER : 实体数据同步器(INT类型)
+- tick : 状态更新
+- defineSynchedData : 初始化
+- readAdditionalSaveData/addAdditionalSaveData : 数据更新和储存
+## 三. 完善FlyingSwordEntityRenderer
+```java
+private EntityModel&lt;FlyingSwordEntity&gt; flyingSwordModel;
+@Override
+public ResourceLocation getTextureLocation(Entity entity) {
+    return new ResourceLocation(TestMod.MODID, 'textures/entity/flying_sword_entity.png');
+}
+@Override
+public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+    super.render(entity, entityYaw, partialTick, poseStack, buffer, packedLight);
+    poseStack.pushPose();
+    poseStack.mulPose(Axis.YN.rotationDegrees(45));
+    poseStack.translate(0, -1, 0);
+    VertexConsumer vertexConsumer = 
+        buffer.getBuffer(flyingSwordModel.renderType(getTextureLocation(entity)));
+    this.flyingSwordModel.renderToBuffer(
+        poseStack,vertexConsumer,packedLight, 
+        OverlayTexture.NO_OVERLAY,1f,1f,1f,1f
+    );
+    poseStack.popPose();
+}
+```
+- flyingSwordModel : 实体模型存储
+- getTextureLocation : 获取实体模型文件
+- render : 渲染
+## 四.把这三个东西注册到游戏中
+### 先注册Entity，另外两个有点特殊
+```java
+public static final DeferredRegister&lt;EntityType&lt;?&gt;&gt; ENTITY_TYPES =
+            DeferredRegister.create(Registries.ENTITY_TYPE, TestMod.MODID);
+public static final Supplier&lt;EntityType&lt;FlyingSwordEntity&gt;&gt; FLYING_SWORD_ENTITY =
+            ENTITY_TYPES.register('flying_sword_entity',
+                    () -&gt; EntityType.Builder.of(FlyingSwordEntity::new, MobCategory.MISC).sized(2, 0.5F).build('flying_sword_entity'));
+```
+记得放进线程
+`ENTITY_TYPES.register(bus);`
+然后再注册另外两个
+```java
+@SubscribeEvent
+public static void registerEntityLayers(EntityRenderersEvent.RegisterLayerDefinitions evt) {
+    evt.registerLayerDefinition(FlyingSwordModel.LAYER_LOCATION, FlyingSwordModel::createBodyLayer);
+}
+@SubscribeEvent
+public static void onClientEvent(FMLClientSetupEvent event){
+    event.enqueueWork(()-&gt;{
+        EntityRenderers.register(Registry.FLYING_SWORD_ENTITY.get(), FlyingSwordEntityRenderer::new);
+    });
+}
+```
+### 最后导入材质，进入游戏就可以用summon指令生成我们的实体啦
+
+## 附完整代码
+FlyingSwordEntity
+```java
+import com.mojang.logging.LogUtils;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import org.slf4j.Logger;
+import net. minecraft. world. level. Level;
+
+public class FlyingSwordEntity extends Entity {
+    private static final Logger LOGGER = LogUtils.getLogger();  //创建日志
+    //实体数据同步器(INT类型)
+    private static final EntityDataAccessor&lt;Integer&gt; COUNTER =
+            SynchedEntityData.defineId(FlyingSwordEntity.class, EntityDataSerializers.INT);
+    @Override
+    public void tick() {
+        Integer i=this.entityData.get(COUNTER); //获取实体数据
+        LOGGER.info(i.toString());  //打印日志
+        if(!this.level().isClientSide()){   //服务端执行逻辑
+            this.entityData.set(COUNTER,i+1);   //设置实体数据
+        }
+        super.tick();
+    }
+    //构造方法
+    public FlyingSwordEntity(EntityType&lt;?&gt; entityType, Level level){
+        super(entityType, level);
+    }
+    //实体数据同步器初始化
+    @Override
+    protected void defineSynchedData() {
+        this.entityData.define(COUNTER,0);
+    }
+    @Override
+    protected void readAdditionalSaveData(CompoundTag compoundTag) {
+        this.entityData.set(COUNTER,compoundTag.getInt('counter'));
+    }
+    @Override
+    protected void addAdditionalSaveData(CompoundTag compoundTag) {
+        compoundTag.putInt('counter',this.entityData.get(COUNTER));
+    }
+
+}
+```
+FlyingSwordEntityRenderer
+```java
+import com.XXXYJade17.TestMod.TestMod;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+
+public class FlyingSwordEntityRenderer extends EntityRenderer {
+    private EntityModel&lt;FlyingSwordEntity&gt; flyingSwordModel;
+    public FlyingSwordEntityRenderer(EntityRendererProvider.Context context) {
+        super(context);
+        flyingSwordModel = new FlyingSwordModel(context.bakeLayer(FlyingSwordModel.LAYER_LOCATION));
+    }
+    @Override
+    public ResourceLocation getTextureLocation(Entity entity) {
+        return new ResourceLocation(TestMod.MODID, 'textures/entity/flying_sword_entity.png');
+    }
+    @Override
+    public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        super.render(entity, entityYaw, partialTick, poseStack, buffer, packedLight);
+        poseStack.pushPose();
+        poseStack.mulPose(Axis.YN.rotationDegrees(45));
+        poseStack.translate(0, -1, 0);
+        VertexConsumer vertexConsumer = buffer.getBuffer(flyingSwordModel.renderType(getTextureLocation(entity)));
+        this.flyingSwordModel.renderToBuffer(poseStack,vertexConsumer,packedLight, OverlayTexture.NO_OVERLAY,1f,1f,1f,1f);
+        poseStack.popPose();
+    }
+}
+```
+FlyingSwordModel
+```java
+import com.XXXYJade17.TestMod.TestMod;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.resources.ResourceLocation;
+
+public class FlyingSwordModel extends EntityModel&lt;FlyingSwordEntity&gt; {
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(TestMod.MODID, 'flying_sword_entity'), 'main');
+    private final ModelPart body;
+
+    public FlyingSwordModel(ModelPart modelPart) {
+        this.body = modelPart.getChild('body');
+    }
+    public static LayerDefinition createBodyLayer() {
+        MeshDefinition meshDefinition = new MeshDefinition();   // 创建网格定义
+        PartDefinition partDefinition = meshDefinition.getRoot();
+        PartDefinition body= partDefinition.addOrReplaceChild('body',
+                CubeListBuilder.create().texOffs(0, 0).addBox(-1.0F, -1.0F, -18.0F, 3.0F, 1.0F, 19.0F, new CubeDeformation(0.0F))
+                .texOffs(0, 20).addBox(-3.0F, -2.0F, -1.0F, 7.0F, 3.0F, 3.0F, new CubeDeformation(0.0F))
+                .texOffs(0, 0).addBox(-1.0F, -1.0F, 1.0F, 3.0F, 1.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 23.0F, 0.0F));
+        return LayerDefinition.create(meshDefinition, 64, 64);
+    }
+
+    @Override
+    public void setupAnim(FlyingSwordEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        //置剑身体body的三维旋转角度，分别对应于X轴（pLimbSwing）、Y轴（pNetHeadYaw）和Z轴（pHeadPitch）的旋转。</description><guid isPermaLink="true">https://XXXYJade17.github.io/NeoForge.github.io/post/11.Entity-shi-ti.html</guid><pubDate>Sat, 15 Mar 2025 15:39:51 +0000</pubDate></item><item><title>10.方块实体</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/10.-fang-kuai-shi-ti.html</link><description>## 一. 什么是方块实体
 方块实体就是用于存储与单个方块相关联的数据，比如箱子里存的东西，熔炉里烧的东西
 这里我们实现一个能够点击后计数的方块,这个计数应该被存储起来,并且退出游戏后读档保持原来的数值。</description><guid isPermaLink="true">https://XXXYJade17.github.io/NeoForge.github.io/post/10.-fang-kuai-shi-ti.html</guid><pubDate>Fri, 14 Mar 2025 13:36:00 +0000</pubDate></item><item><title>09.Tag</title><link>https://XXXYJade17.github.io/NeoForge.github.io/post/09.Tag.html</link><description>## 一.什么是Tag
 Tag就是用于设置你注册的方块挖掘速度和挖掘等级之类的
